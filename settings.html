@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings</title>
+<link rel="stylesheet" href="Realdashboard.css">
+</head>
+
+<body>
+
+<div class="shell">
+
+<aside class="sidebar">
+<div class="logo">
+<div class="logo-dot"></div>
+Orbital
+</div>
+
+<div class="nav-label">Workspace</div>
+<a href="RealDash.html" class="nav-item">Overview</a>
+<a href="projects.html" class="nav-item">Projects</a>
+<a href="sprint.html" class="nav-item">Sprint Board</a>
+<a href="timeline.html" class="nav-item">Timeline</a>
+
+<div class="nav-label">Manage</div>
+<a href="team.html" class="nav-item">Team</a>
+<a href="reports.html" class="nav-item">Reports</a>
+<a href="goals.html" class="nav-item">Goals</a>
+
+<div class="nav-label">Tools</div>
+<a href="docs.html" class="nav-item">Docs</a>
+<a href="settings.html" class="nav-item active">Settings</a>
+</aside>
+
+<main class="main">
+
+<div class="settings-header">
+<div>
+<h1>Settings</h1>
+<p>Manage your dashboard preferences</p>
+</div>
+<button class="save-btn">Save Changes</button>
+</div>
+
+<div class="profile-card">
+<div class="profile-left">
+<div class="profile-avatar">AK</div>
+<div>
+<h3>Aryan Kumar</h3>
+<span>Product Lead</span>
+</div>
+</div>
+<button class="edit-btn">Edit Profile</button>
+</div>
+
+
+<div class="settings-grid">
+
+<div class="settings-card">
+<div>
+<h3>Dark Mode</h3>
+<p>Switch between light and dark theme</p>
+</div>
+<label class="switch">
+<input type="checkbox" id="darkToggle">
+<span class="slider"></span>
+</label>
+</div>
+
+<div class="settings-card">
+<div>
+<h3>Email Notifications</h3>
+<p>Receive updates via email</p>
+</div>
+<label class="switch">
+<input type="checkbox" checked>
+<span class="slider"></span>
+</label>
+</div>
+
+<div class="settings-card">
+<div>
+<h3>Auto Save</h3>
+<p>Automatically save your work</p>
+</div>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+
+<div class="settings-card">
+<div>
+<h3>Real-time Sync</h3>
+<p>Sync dashboard with team instantly</p>
+</div>
+<label class="switch">
+<input type="checkbox" checked>
+<span class="slider"></span>
+</label>
+</div>
+
+<div class="settings-card">
+<div>
+<h3>Performance Mode</h3>
+<p>Optimize UI animations</p>
+</div>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+
+<div class="settings-card danger">
+<div>
+<h3>Delete Workspace</h3>
+<p>This action cannot be undone</p>
+</div>
+<button class="danger-btn">Delete</button>
+</div>
+
+</div>
+
+</main>
+</div>
+
+<script src="Realtime.js"></script>
+
+</body>
+</html>

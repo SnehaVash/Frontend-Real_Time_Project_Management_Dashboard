@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+<title>Orbital – Project Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400" rel="stylesheet">
+
+<link rel="stylesheet" href="Realdashboard.css">
+</head>
+
+<body>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <div class="shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-dot"></div>
+        Orbital
+      </div>
+
+      <div class="nav-label">Workspace</div>
+      <a href="RealDash.html" class="nav-item active">
+<span class="nav-icon">◇</span> Overview
+</a>
+      <a href="projects.html" class="nav-item">
+      <span class="nav-icon">◈</span> Projects
+      </a>
+      <a href="sprint.html" class="nav-item">
+      <span class="nav-icon">◻</span> Sprint Board
+      </a>
+
+      <a href="timeline.html" class="nav-item">
+        <span class="nav-icon">◷</span> Timeline
+      </a>
+
+     <div class="nav-label">Manage</div>
+
+<a href="team.html" class="nav-item">
+  <span class="nav-icon">◌</span> Team
+</a>
+
+<a href="reports.html" class="nav-item">
+  <span class="nav-icon">◌</span> Reports
+</a>
+
+<a href="goals.html" class="nav-item">
+  <span class="nav-icon">◎</span> Goals
+</a>
+
+      <div class="nav-label">Tools</div>
+
+<a href="docs.html" class="nav-item">
+<span class="nav-icon">◆</span> Docs
+</a>
+
+<a href="settings.html" class="nav-item">
+<span class="nav-icon">⚙</span> Settings
+</a>
+
+      <div class="sidebar-bottom">
+        <div class="user-card">
+          <div class="avatar">AK</div>
+          <div class="user-info">
+            <div class="user-name">Aryan Kumar</div>
+            <div class="user-role">Product Lead</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main area -->
+    <div class="main">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <div>
+          <div class="page-title">Dashboard</div>
+          <div class="breadcrumb">Q2 2026 · Sprint 14</div>
+        </div>
+        <div class="topbar-actions">
+          <div class="live-badge">
+            <div class="live-dot"></div> LIVE
+          </div>
+          <a href="filter.html" class="btn btn-ghost">⚙ Filter</a>
+          <a href="newtask.html" class="btn btn-primary">+ New Task</a>
+        </div>
+      </header>
+
+      <!-- Real-time ticker -->
+      <div class="ticker">
+        <span class="ticker-label">● LIVE</span>
+        <div class="ticker-text">
+          <span class="ticker-inner">
+            Priya merged PR #284 "Auth refactor" · Rohan moved "API Gateway" to Review · Deployment to staging succeeded
+            · Meera opened Bug #119 · Sprint velocity at 94% · Zara completed "Dark mode UI" · 3 PRs awaiting review
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Priya merged PR #284 "Auth refactor" · Rohan moved "API Gateway" to
+            Review · Deployment to staging succeeded ·
+          </span>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card c1">
+            <div class="stat-icon">◈</div>
+            <div class="stat-value" id="s1">48</div>
+            <div class="stat-label">Active Tasks</div>
+            <div class="stat-change up">↑ 12% from last sprint</div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width:72%; background: var(--accent);"></div>
+            </div>
+          </div>
+          <div class="stat-card c2">
+            <div class="stat-icon">◉</div>
+            <div class="stat-value" id="s2">7</div>
+            <div class="stat-label">Bugs Open</div>
+            <div class="stat-change down">↑ 3 since yesterday</div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width:28%; background: var(--accent2);"></div>
+            </div>
+          </div>
+          <div class="stat-card c3">
+            <div class="stat-icon">◷</div>
+            <div class="stat-value" id="s3">94<span style="font-size:1.1rem;font-weight:400">%</span></div>
+            <div class="stat-label">Sprint Velocity</div>
+            <div class="stat-change up">↑ 8% above target</div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width:94%; background: var(--accent3);"></div>
+            </div>
+          </div>
+          <div class="stat-card c4">
+            <div class="stat-icon">◑</div>
+            <div class="stat-value" id="s4">12</div>
+            <div class="stat-label">Team Members</div>
+            <div class="stat-change up">9 active now</div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width:75%; background: var(--accent4);"></div>
+            </div>
+          </div>
+        </div>
+        <div class="work-card">
+  <div class="work-left">
+    <div class="work-title">Daily Work Limit</div>
+    <div class="work-hours">
+      <span id="hoursWorked">6</span>/8 hrs
+    </div>
+    <div class="work-sub">Max allowed working hours</div>
+  </div>
+
+  <div class="work-right">
+    <div class="circle">
+      <div class="inner">
+        <span id="percent">75%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="work-alert" id="workAlert">
+    ⚠ Work limit exceeded
+  </div>
+</div>
+
+        <!-- Main grid: Sprint board + Activity -->
+        <div class="main-grid">
+
+          <!-- Sprint board -->
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">Sprint Board</div>
+              <span class="panel-meta">Sprint 14 · ends Apr 11</span>
+            </div>
+            <div class="sprint-board">
+
+              <!-- To Do -->
+              <div class="sprint-col">
+                <div class="sprint-col-title" style="color:var(--muted)">To Do <span class="col-count">5</span></div>
+
+                <div class="task-card">
+                  <div class="task-tag tag-feature">Feature</div>
+                  <div class="task-title">Implement OAuth 2.0 flow with Google SSO</div>
+                  <div class="task-foot">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#7c5cfc,#fc5c7d)">AK</div>
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#5cf0c8,#7c5cfc)">PR</div>
+                    </div>
+                    <div class="task-due">Apr 8</div>
+                  </div>
+                </div>
+
+                <div class="task-card">
+                  <div class="task-tag tag-design">Design</div>
+                  <div class="task-title">Redesign onboarding modal with new brand</div>
+                  <div class="task-foot">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#fcb95c,#fc5c7d)">ZR</div>
+                    </div>
+                    <div class="task-due">Apr 9</div>
+                  </div>
+                </div>
+
+                <div class="task-card">
+                  <div class="task-tag tag-infra">Infra</div>
+                  <div class="task-title">Set up Redis caching layer for session data</div>
+                  <div class="task-foot">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#5cf0c8,#fcb95c)">MV</div>
+                    </div>
+                    <div class="task-due soon">Apr 5</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- In Progress -->
+              <div class="sprint-col">
+                <div class="sprint-col-title" style="color:var(--accent)">In Progress <span class="col-count">4</span>
+                </div>
+
+                <div class="task-card" style="border-color:rgba(124,92,252,0.2)">
+                  <div class="task-tag tag-feature">Feature</div>
+                  <div class="task-title">API Gateway rate limiting & throttle rules</div>
+                  <div class="prog-bar">
+                    <div class="prog-fill" style="width:65%;background:var(--accent)"></div>
+                  </div>
+                  <div class="task-foot" style="margin-top:8px">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#fc5c7d,#fcb95c)">RH</div>
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#7c5cfc,#5cf0c8)">AK</div>
+                    </div>
+                    <div class="task-due">65%</div>
+                  </div>
+                </div>
+
+                <div class="task-card" style="border-color:rgba(124,92,252,0.2)">
+                  <div class="task-tag tag-bug">Bug</div>
+                  <div class="task-title">Fix race condition in payment webhook handler</div>
+                  <div class="prog-bar">
+                    <div class="prog-fill" style="width:40%;background:var(--accent2)"></div>
+                  </div>
+                  <div class="task-foot" style="margin-top:8px">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#5cf0c8,#7c5cfc)">PR</div>
+                    </div>
+                    <div class="task-due overdue">Overdue</div>
+                  </div>
+                </div>
+
+                <div class="task-card" style="border-color:rgba(124,92,252,0.2)">
+                  <div class="task-tag tag-design">Design</div>
+                  <div class="task-title">Dark mode — component token pass</div>
+                  <div class="prog-bar">
+                    <div class="prog-fill" style="width:88%;background:var(--accent4)"></div>
+                  </div>
+                  <div class="task-foot" style="margin-top:8px">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#fcb95c,#5cf0c8)">ZR</div>
+                    </div>
+                    <div class="task-due">88%</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Done -->
+              <div class="sprint-col">
+                <div class="sprint-col-title" style="color:var(--accent3)">Done <span class="col-count">6</span></div>
+
+                <div class="task-card" style="opacity:0.7">
+                  <div class="task-tag tag-feature">Feature</div>
+                  <div class="task-title">Search indexing with Elasticsearch</div>
+                  <div class="task-foot">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#5cf0c8,#7c5cfc)">MV</div>
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#7c5cfc,#fc5c7d)">AK</div>
+                    </div>
+                    <div class="task-due" style="color:var(--accent3)">✓ Done</div>
+                  </div>
+                </div>
+
+                <div class="task-card" style="opacity:0.7">
+                  <div class="task-tag tag-infra">Infra</div>
+                  <div class="task-title">CI/CD pipeline migration to GitHub Actions</div>
+                  <div class="task-foot">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#fc5c7d,#fcb95c)">RH</div>
+                    </div>
+                    <div class="task-due" style="color:var(--accent3)">✓ Done</div>
+                  </div>
+                </div>
+
+                <div class="task-card" style="opacity:0.7">
+                  <div class="task-tag tag-bug">Bug</div>
+                  <div class="task-title">Memory leak in WebSocket event emitter</div>
+                  <div class="task-foot">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#5cf0c8,#fcb95c)">PR</div>
+                    </div>
+                    <div class="task-due" style="color:var(--accent3)">✓ Done</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity feed -->
+          <div class="panel" style="animation-delay:0.3s">
+            <div class="panel-head">
+              <div class="panel-title">Live Activity</div>
+              <div class="live-badge" style="font-size:0.65rem;padding:3px 8px">
+                <div class="live-dot"></div>9 online
+              </div>
+            </div>
+            <div class="activity-feed" id="activityFeed">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom row -->
+        <div class="bottom-grid">
+
+          <!-- Team -->
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">Team Status</div>
+              <span class="panel-meta">12 members</span>
+            </div>
+            <table class="team-table">
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Role</th>
+                  <th>Tasks</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="member-cell">
+                      <div class="member-av" style="background:linear-gradient(135deg,#7c5cfc,#fc5c7d)">AK</div>Aryan
+                      Kumar
+                    </div>
+                  </td>
+                  <td style="color:var(--muted);font-size:0.75rem">PM</td>
+                  <td>8</td>
+                  <td><span class="status-pill s-active"><span class="dot"></span>Active</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="member-cell">
+                      <div class="member-av" style="background:linear-gradient(135deg,#5cf0c8,#7c5cfc)">PR</div>Priya
+                      Rao
+                    </div>
+                  </td>
+                  <td style="color:var(--muted);font-size:0.75rem">Backend</td>
+                  <td>6</td>
+                  <td><span class="status-pill s-active"><span class="dot"></span>Active</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="member-cell">
+                      <div class="member-av" style="background:linear-gradient(135deg,#fcb95c,#fc5c7d)">ZR</div>Zara
+                      Rashid
+                    </div>
+                  </td>
+                  <td style="color:var(--muted);font-size:0.75rem">Design</td>
+                  <td>4</td>
+                  <td><span class="status-pill s-active"><span class="dot"></span>Active</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="member-cell">
+                      <div class="member-av" style="background:linear-gradient(135deg,#fc5c7d,#fcb95c)">RH</div>Rohan
+                      Hegde
+                    </div>
+                  </td>
+                  <td style="color:var(--muted);font-size:0.75rem">Frontend</td>
+                  <td>5</td>
+                  <td><span class="status-pill s-away"><span class="dot"></span>In meeting</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="member-cell">
+                      <div class="member-av" style="background:linear-gradient(135deg,#5cf0c8,#fcb95c)">MV</div>Meera
+                      Varma
+                    </div>
+                  </td>
+                  <td style="color:var(--muted);font-size:0.75rem">DevOps</td>
+                  <td>3</td>
+                  <td><span class="status-pill s-offline"><span class="dot"></span>Offline</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Velocity chart -->
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">Sprint Velocity</div>
+              <span class="panel-meta">Last 7 sprints</span>
+            </div>
+            <div class="chart-wrap">
+              <div class="bar-chart" id="barChart"></div>
+              <div class="chart-labels" id="chartLabels"></div>
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <div class="legend-dot" style="background:var(--accent)"></div>Completed
+                </div>
+                <div class="legend-item">
+                  <div class="legend-dot" style="background:rgba(252,92,125,0.5)"></div>Scope added
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="Realtime.js"></script>
+
+</body>
+
+</html>
