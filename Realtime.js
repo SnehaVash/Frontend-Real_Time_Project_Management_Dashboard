@@ -140,3 +140,53 @@ localStorage.setItem("darkMode","false");
 });
 
 }
+const editBtn = document.getElementById("editProfileBtn");
+const modal = document.getElementById("profileModal");
+const closeBtn = document.getElementById("closeProfile");
+const saveBtn = document.getElementById("saveProfile");
+
+editBtn.onclick = () => {
+modal.style.display = "flex";
+}
+
+closeBtn.onclick = () => {
+modal.style.display = "none";
+}
+
+saveBtn.onclick = () => {
+
+const name = document.getElementById("profileName").value;
+const role = document.getElementById("profileRole").value;
+
+document.querySelector(".profile-name").textContent = name;
+document.querySelector(".profile-role").textContent = role;
+
+modal.style.display = "none";
+}
+document.addEventListener("DOMContentLoaded", function(){
+
+const editBtn = document.getElementById("editProfileBtn");
+const modal = document.getElementById("profileModal");
+const closeBtn = document.getElementById("closeProfile");
+const saveBtn = document.getElementById("saveProfile");
+
+editBtn.addEventListener("click", () => {
+modal.style.display = "flex";
+});
+
+closeBtn.addEventListener("click", () => {
+modal.style.display = "none";
+});
+
+saveBtn.addEventListener("click", () => {
+
+const name = document.getElementById("profileName").value;
+const role = document.getElementById("profileRole").value;
+
+document.querySelector(".profile-name").textContent = name;
+document.querySelector(".profile-role").textContent = role;
+
+modal.style.display = "none";
+});
+
+});

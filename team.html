@@ -11,7 +11,6 @@
 
 <div class="shell">
 
-<!-- sidebar same as dashboard -->
 <aside class="sidebar">
 
 <div class="logo">
@@ -54,15 +53,14 @@ Orbital
 </aside>
 
 
-<!-- MAIN -->
 <main class="main">
 
 <div class="team-header">
 <h1>Team Members</h1>
-<button class="add-member">+ Add Member</button>
+<button class="add-member" onclick="openMemberModal()">+ Add Member</button>
 </div>
 
-<div class="team-grid">
+<div class="team-grid" id="teamGrid">
 
 <div class="team-card">
 <div class="avatar">PR</div>
@@ -97,6 +95,68 @@ Orbital
 </main>
 
 </div>
+
+
+<!-- ADD MEMBER MODAL -->
+<div class="modal" id="memberModal">
+<div class="modal-content">
+
+<h2>Add Team Member</h2>
+
+<input type="text" id="memberName" placeholder="Member Name">
+<input type="text" id="memberRole" placeholder="Role">
+
+<select id="memberStatus">
+<option value="online">Online</option>
+<option value="offline">Offline</option>
+<option value="busy">Busy</option>
+</select>
+
+<div class="modal-buttons">
+<button onclick="addMember()">Add Member</button>
+<button onclick="closeMemberModal()">Cancel</button>
+</div>
+
+</div>
+</div>
+
+
+<script>
+function openMemberModal(){
+document.getElementById("memberModal").style.display="flex";
+}
+
+function closeMemberModal(){
+document.getElementById("memberModal").style.display="none";
+}
+
+function addMember(){
+
+const name = document.getElementById("memberName").value;
+const role = document.getElementById("memberRole").value;
+const status = document.getElementById("memberStatus").value;
+
+if(!name || !role) return;
+
+const initials = name.split(" ").map(n=>n[0]).join("").toUpperCase();
+
+const card = `
+<div class="team-card">
+<div class="avatar">${initials}</div>
+<h3>${name}</h3>
+<p>${role}</p>
+<span class="status ${status}">${status.charAt(0).toUpperCase()+status.slice(1)}</span>
+</div>
+`;
+
+document.getElementById("teamGrid").insertAdjacentHTML("beforeend",card);
+
+closeMemberModal();
+
+document.getElementById("memberName").value="";
+document.getElementById("memberRole").value="";
+}
+</script>
 
 </body>
 </html>

@@ -54,42 +54,65 @@ Orbital
 <div class="docs-icon">🚀</div>
 <h3>Getting Started</h3>
 <p>Setup dashboard and start managing projects.</p>
-<button>Read More</button>
+<button onclick="toggleDoc('getting')">Read More</button>
+
+<p class="doc-more" id="getting">
+Setup dashboard, create project, assign tasks and track progress.
+</p>
 </div>
 
 <div class="docs-card">
 <div class="docs-icon">📌</div>
 <h3>Create Tasks</h3>
-<p>Create, assign and manage tasks easily.</p>
-<button>Read More</button>
+<button onclick="toggleDoc('tasks')">Read More</button>
+
+<p class="doc-more" id="tasks">
+Create your first project, add tasks, assign team members and track progress.
+</p>
 </div>
 
 <div class="docs-card">
 <div class="docs-icon">📊</div>
 <h3>Sprint Workflow</h3>
 <p>Track progress from todo to done.</p>
-<button>Read More</button>
+<<button onclick="toggleDoc('sprint')">Read More</button>
+
+<p class="doc-more" id="sprint">
+Move tasks from todo to in-progress and completed to track sprint.
+</p>
 </div>
 
 <div class="docs-card">
 <div class="docs-icon">👥</div>
 <h3>Team Management</h3>
 <p>Manage team productivity and roles.</p>
-<button>Read More</button>
+<button onclick="toggleDoc('team')">Read More</button>
+
+<p class="doc-more" id="team">
+Add team members, assign roles and manage productivity.
+</p>
 </div>
 
 <div class="docs-card">
 <div class="docs-icon">📈</div>
 <h3>Reports</h3>
 <p>View analytics and performance metrics.</p>
-<button>Read More</button>
+<button onclick="toggleDoc('reports')">Read More</button>
+
+<p class="doc-more" id="reports">
+View analytics, progress charts and performance metrics.
+</p>
 </div>
 
 <div class="docs-card">
 <div class="docs-icon">⚙</div>
 <h3>Settings</h3>
 <p>Customize dashboard preferences.</p>
-<button>Read More</button>
+<button onclick="toggleDoc('settings')">Read More</button>
+
+<p class="doc-more" id="settings">
+Customize dashboard preferences, profile and notifications.
+</p>
 </div>
 
 </div>
@@ -97,6 +120,19 @@ Orbital
 </main>
 
 </div>
+<script>
+function toggleDoc(id){
+
+const el = document.getElementById(id);
+
+if(el.style.display==="block"){
+el.style.display="none";
+}else{
+el.style.display="block";
+}
+
+}
+</script>
 
 </body>
 </html>
