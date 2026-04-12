@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#020617,#0f172a);
+}
+
+.card{
+width:380px;
+padding:40px;
+border-radius:18px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(20px);
+box-shadow:0 20px 60px rgba(0,0,0,.5);
+color:white;
+}
+
+.title{
+font-size:24px;
+margin-bottom:20px;
+}
+
+.inputBox{
+margin-bottom:15px;
+}
+
+input{
+width:100%;
+padding:14px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,0.1);
+background:rgba(255,255,255,0.08);
+color:white;
+outline:none;
+}
+
+.btn{
+width:100%;
+padding:14px;
+border:none;
+border-radius:10px;
+background:linear-gradient(135deg,#6366f1,#8b5cf6);
+color:white;
+cursor:pointer;
+margin-top:10px;
+}
+
+.loginLink{
+text-align:center;
+margin-top:15px;
+font-size:13px;
+color:#aaa;
+}
+
+.loginLink span{
+color:#8b5cf6;
+cursor:pointer;
+}
+</style>
+
+</head>
+<body>
+
+<div class="card">
+
+<div class="title">Create Account</div>
+
+<div class="inputBox">
+<input id="newUser" placeholder="Username">
+</div>
+
+<div class="inputBox">
+<input id="newPass" type="password" placeholder="Password">
+</div>
+
+<div class="inputBox">
+<input id="confirmPass" type="password" placeholder="Confirm Password">
+</div>
+
+<button class="btn" onclick="register()">Register</button>
+
+<div class="loginLink">
+Already have account? 
+<span onclick="goLogin()">Login</span>
+</div>
+
+</div>
+
+<script>
+function register(){
+
+let user=document.getElementById("newUser").value;
+let pass=document.getElementById("newPass").value;
+let confirm=document.getElementById("confirmPass").value;
+
+if(pass !== confirm){
+alert("Passwords do not match");
+return;
+}
+
+localStorage.setItem("username",user);
+localStorage.setItem("password",pass);
+
+alert("Account created successfully");
+
+window.location.href="login.html";
+}
+
+function goLogin(){
+window.location.href="login.html";
+}
+</script>
+
+</body>
+</html>
