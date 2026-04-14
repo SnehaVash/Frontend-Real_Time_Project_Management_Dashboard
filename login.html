@@ -96,6 +96,20 @@ transform:translateY(-2px);
 box-shadow:0 10px 20px rgba(99,102,241,.4);
 }
 
+.btn:disabled{
+opacity:0.6;
+cursor:not-allowed;
+transform:none;
+}
+
+.errorMsg{
+color:#f87171;
+font-size:13px;
+text-align:center;
+margin-top:10px;
+display:none;
+}
+
 .register{
 margin-top:15px;
 text-align:center;
@@ -141,63 +155,99 @@ animation:shake .3s;
 <div class="title">User Login</div>
 
 <div class="inputBox">
-<input id="user" placeholder="Username">
+    <input id="email" type="email" placeholder="Email">
 </div>
 
 <div class="inputBox">
-<input id="pass" type="password" placeholder="Password">
-<span class="toggle" onclick="toggle()">👁</span>
+    <input id="pass" type="password" placeholder="Password">
+    <span class="toggle" onclick="toggle()">👁</span>
 </div>
 
-<button class="btn" onclick="login()">Login</button>
+<div class="errorMsg" id="errorMsg">Invalid email or password</div>
+
+<button class="btn" id="loginBtn" onclick="login()">Login</button>
 
 <div class="register">
-Don't have an account? 
-<span onclick="goRegister()">Register</span>
+    Don't have an account? 
+    <span onclick="goRegister()">Register</span>
 </div>
 
 <div class="footer">
-Real-Time Project Dashboard
+    Real-Time Project Dashboard
 </div>
 
 </div>
 
 <script>
-function login(){
+async function login() {
+    const email = document.getElementById("email").value.trim();
+    const pass  = document.getElementById("pass").value;
+    const card  = document.getElementById("card");
+    const btn   = document.getElementById("loginBtn");
+    const errorMsg = document.getElementById("errorMsg");
 
-let u=document.getElementById("user").value;
-let p=document.getElementById("pass").value;
-let card=document.getElementById("card");
+    errorMsg.style.display = "none";
 
-let savedUser = localStorage.getItem("username");
-let savedPass = localStorage.getItem("password");
+    if (!email || !pass) {
+        errorMsg.textContent = "Please enter email and password.";
+        errorMsg.style.display = "block";
+        card.classList.add("shake");
+        setTimeout(() => card.classList.remove("shake"), 300);
+        return;
+    }
 
-if(
-(u==="admin" && p==="1234") ||
-(u===savedUser && p===savedPass)
-){
-sessionStorage.setItem("auth","true");
-window.location.href="RealDash.html";
-}else{
-card.classList.add("shake");
-setTimeout(()=>card.classList.remove("shake"),300);
+    btn.disabled = true;
+    btn.textContent = "Logging in...";
+
+    try {
+        const response = await fetch("http://localhost:5000/api/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, password: pass })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            // Wrong credentials
+            errorMsg.textContent = data.message || "Invalid email or password.";
+            errorMsg.style.display = "block";
+            card.classList.add("shake");
+            setTimeout(() => card.classList.remove("shake"), 300);
+            return;
+        }
+
+        sessionStorage.setItem("auth", "true");
+        sessionStorage.setItem("token", data.token);         // save JWT token
+        sessionStorage.setItem("user", JSON.stringify(data.user)); // save user object
+
+        // Redirect to dashboard
+        window.location.href = "RealDash.html";
+
+    } catch (err) {
+        errorMsg.textContent = "Cannot connect to server. Please try again.";
+        errorMsg.style.display = "block";
+        card.classList.add("shake");
+        setTimeout(() => card.classList.remove("shake"), 300);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Login";
+    }
 }
 
+function toggle() {
+    let p = document.getElementById("pass");
+    p.type = p.type === "password" ? "text" : "password";
 }
 
-function toggle(){
-let p=document.getElementById("pass");
-p.type = p.type === "password" ? "text" : "password";
+function goRegister() {
+    window.location.href = "register.html";
 }
 
-function goRegister(){
-window.location.href="register.html";
-}
-
-document.addEventListener("keypress",function(e){
-if(e.key==="Enter"){
-login();
-}
+document.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") login();
 });
 </script>
 

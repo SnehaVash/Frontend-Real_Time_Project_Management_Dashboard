@@ -7,7 +7,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 
-<title>Orbital – Project Dashboard</title>
+<title>RTPM - Project Dashboard</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400" rel="stylesheet">
 
@@ -25,7 +25,7 @@
     <aside class="sidebar">
       <div class="logo">
         <div class="logo-dot"></div>
-        Orbital
+        RTPM
       </div>
 
       <div class="nav-label">Workspace</div>
@@ -92,6 +92,9 @@
             <div class="live-dot"></div> LIVE
           </div>
           <a href="filter.html" class="btn btn-ghost">⚙ Filter</a>
+         <a href="#" class="btn btn-primary" onclick="openProjectModal()">
+    + Create Project
+</a>
           <a href="newtask.html" class="btn btn-primary">+ New Task</a>
         </div>
       </header>
@@ -151,27 +154,7 @@
             </div>
           </div>
         </div>
-        <div class="work-card">
-  <div class="work-left">
-    <div class="work-title">Daily Work Limit</div>
-    <div class="work-hours">
-      <span id="hoursWorked">6</span>/8 hrs
-    </div>
-    <div class="work-sub">Max allowed working hours</div>
-  </div>
-
-  <div class="work-right">
-    <div class="circle">
-      <div class="inner">
-        <span id="percent">75%</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="work-alert" id="workAlert">
-    ⚠ Work limit exceeded
-  </div>
-</div>
+       
 
         <!-- Main grid: Sprint board + Activity -->
         <div class="main-grid">
@@ -429,7 +412,22 @@
       </div>
     </div>
   </div>
+  <!-- Create Project Modal -->
+<div id="projectModal" class="modal">
+  <div class="modal-box">
+    <h2>Create Project</h2>
+
+    <input type="text" id="projectName" placeholder="Project Name">
+    <textarea id="projectDesc" placeholder="Project Description"></textarea>
+
+    <div class="modal-actions">
+      <button onclick="createProject()">Create</button>
+      <button onclick="closeProjectModal()">Cancel</button>
+    </div>
+  </div>
+</div>
   <script src="Realtime.js"></script>
+   
 
 </body>
 
