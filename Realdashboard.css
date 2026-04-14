@@ -1940,3 +1940,292 @@ margin-top:10px;
 color:#9ca3af;
 line-height:1.5;
 }
+.edit-btn {
+    background: linear-gradient(135deg, #6a5cff, #8b5cf6);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.edit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(139,92,246,0.4);
+}.edit-profile-btn{
+    background: linear-gradient(135deg,#5f6cff,#8b5cf6);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    margin-left: auto;
+}
+
+.edit-profile-btn:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(139,92,246,0.35);
+}
+.settings-header{
+position: relative;
+}
+
+.settings-header .switch,
+.settings-header label,
+.settings-header input{
+display:none !important;
+}
+.settings-header > *:last-child{
+display:none !important;
+}
+.switch{
+display:none !important;
+}
+
+/* toggle ko visible karo */
+.setting-card {
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+/* switch visible */
+.switch {
+display: inline-block !important;
+width: 50px;
+height: 26px;
+position: relative;
+}
+
+/* slider visible */
+.slider {
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: #2a3b55;
+border-radius: 34px;
+cursor: pointer;
+}
+
+/* circle */
+.slider::before {
+content: "";
+position: absolute;
+height: 18px;
+width: 18px;
+left: 4px;
+bottom: 4px;
+background: white;
+border-radius: 50%;
+transition: .3s;
+}
+
+/* checked state */
+.switch input:checked + .slider {
+background: #4da3ff;
+}
+
+.switch input:checked + .slider::before {
+transform: translateX(24px);
+}
+
+/* IMPORTANT: input hidden but working */
+.switch input {
+opacity: 0;
+width: 0;
+height: 0;
+position: absolute;
+}
+.setting-card{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px;
+overflow: visible;   /* IMPORTANT */
+}
+
+.switch{
+position:relative;
+flex-shrink:0;   /* cut hone se bachata hai */
+margin-left:20px;
+}
+
+.setting-info{
+flex:1;
+}/* bottom left extra toggle hide */
+.switch{
+position:relative;
+}
+
+.switch:not(.setting-card .switch){
+display:none !important;
+}
+.goals-wrapper{
+display:flex;
+flex-direction:column;
+gap:30px;
+}
+
+.project-title{
+color:white;
+margin-bottom:15px;
+font-size:22px;
+}
+
+.goals-grid{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.goal-card{
+background:linear-gradient(145deg,#0f1b2e,#0a1426);
+padding:20px;
+border-radius:16px;
+width:300px;
+}
+
+.goal-card h3{
+color:white;
+margin-bottom:15px;
+}
+
+.progress-bar{
+height:8px;
+background:#1e2a3a;
+border-radius:10px;
+overflow:hidden;
+margin-bottom:8px;
+}
+
+.progress{
+height:100%;
+background:linear-gradient(90deg,#7c5cff,#00d4ff);
+border-radius:10px;
+}
+
+.goal-card span{
+color:#9bb3c9;
+font-size:14px;
+}
+.goals-wrapper{
+padding:30px 40px;
+display:flex;
+flex-direction:column;
+gap:35px;
+}
+
+.project-goals{
+background:linear-gradient(145deg,#081428,#020b1a);
+padding:25px;
+border-radius:18px;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+border:1px solid rgba(255,255,255,0.05);
+}
+
+.project-title{
+font-size:22px;
+font-weight:600;
+margin-bottom:20px;
+color:white;
+letter-spacing:.5px;
+}
+
+.goals-grid{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.goal-card{
+background:linear-gradient(145deg,#0f1b2e,#0a1426);
+padding:18px 20px;
+border-radius:14px;
+width:260px;
+transition:.3s;
+border:1px solid rgba(255,255,255,0.05);
+}
+
+.goal-card:hover{
+transform:translateY(-5px);
+box-shadow:0 10px 25px rgba(0,0,0,.5);
+}
+
+.goal-card h3{
+font-size:16px;
+margin-bottom:12px;
+color:white;
+font-weight:500;
+}
+
+.progress-bar{
+height:6px;
+background:#1b2a3d;
+border-radius:20px;
+overflow:hidden;
+margin-bottom:8px;
+}
+
+.progress{
+height:100%;
+background:linear-gradient(90deg,#7c5cff,#00d4ff);
+border-radius:20px;
+}
+
+.goal-card span{
+font-size:13px;
+color:#8fa3bf;
+}
+
+h1{
+color:white;
+margin-left:40px;
+margin-top:25px;
+font-size:28px;
+}
+/* project status card */
+.stat-card:first-child{
+display:flex;
+flex-direction:column;
+justify-content:center;
+}
+
+.stat-card:first-child .stat-value{
+font-size:18px;
+font-weight:600;
+color:white;
+}
+
+.stat-card:first-child .stat-label{
+font-size:14px;
+color:#8fa3bf;
+}
+/* top dashboard numbers same size */
+.stat-value,
+.metric-value,
+.kpi-value {
+font-size: 34px !important;
+font-weight: 700;
+line-height: 1;
+}
+/* docs cards equal height + button bottom */
+.docs-card{
+display:flex;
+flex-direction:column;
+height:100%;
+}
+
+.docs-card button{
+margin-top:auto;
+}
+
+/* description spacing fix */
+.docs-card p{
+margin-bottom:14px;
+}
