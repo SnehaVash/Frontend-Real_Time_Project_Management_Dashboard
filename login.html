@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Login</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#020617,#0f172a);
+overflow:hidden;
+}
+
+body::before{
+content:"";
+position:absolute;
+width:600px;
+height:600px;
+background:radial-gradient(circle,#6366f1,transparent);
+filter:blur(120px);
+opacity:.5;
+}
+
+.card{
+width:380px;
+padding:40px;
+border-radius:18px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(20px);
+box-shadow:0 20px 60px rgba(0,0,0,.5);
+color:white;
+z-index:2;
+}
+
+.title{
+font-size:26px;
+font-weight:600;
+margin-bottom:25px;
+}
+
+.inputBox{
+position:relative;
+margin-bottom:18px;
+}
+
+.inputBox input{
+width:100%;
+padding:14px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,0.1);
+background:rgba(255,255,255,0.08);
+color:white;
+outline:none;
+}
+
+.inputBox input::placeholder{
+color:#aaa;
+}
+
+.toggle{
+position:absolute;
+right:12px;
+top:12px;
+cursor:pointer;
+opacity:.7;
+}
+
+.btn{
+width:100%;
+padding:14px;
+border:none;
+border-radius:10px;
+background:linear-gradient(135deg,#6366f1,#8b5cf6);
+color:white;
+font-size:15px;
+cursor:pointer;
+transition:.3s;
+margin-top:5px;
+}
+
+.btn:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 20px rgba(99,102,241,.4);
+}
+
+.btn:disabled{
+opacity:0.6;
+cursor:not-allowed;
+transform:none;
+}
+
+.errorMsg{
+color:#f87171;
+font-size:13px;
+text-align:center;
+margin-top:10px;
+display:none;
+}
+
+.register{
+margin-top:15px;
+text-align:center;
+font-size:13px;
+color:#aaa;
+}
+
+.register span{
+color:#8b5cf6;
+cursor:pointer;
+font-weight:500;
+}
+
+.register span:hover{
+text-decoration:underline;
+}
+
+.footer{
+text-align:center;
+margin-top:12px;
+opacity:.6;
+font-size:13px;
+}
+
+.shake{
+animation:shake .3s;
+}
+
+@keyframes shake{
+0%{transform:translateX(0)}
+25%{transform:translateX(-5px)}
+50%{transform:translateX(5px)}
+75%{transform:translateX(-5px)}
+100%{transform:translateX(0)}
+}
+</style>
+
+</head>
+<body>
+
+<div class="card" id="card">
+
+<div class="title">User Login</div>
+
+<div class="inputBox">
+    <input id="email" type="email" placeholder="Email">
+</div>
+
+<div class="inputBox">
+    <input id="pass" type="password" placeholder="Password">
+    <span class="toggle" onclick="toggle()">👁</span>
+</div>
+
+<div class="errorMsg" id="errorMsg">Invalid email or password</div>
+
+<button class="btn" id="loginBtn" onclick="login()">Login</button>
+
+<div class="register">
+    Don't have an account? 
+    <span onclick="goRegister()">Register</span>
+</div>
+
+<div class="footer">
+    Real-Time Project Dashboard
+</div>
+
+</div>
+
+<script>
+async function login() {
+    const email = document.getElementById("email").value.trim();
+    const pass  = document.getElementById("pass").value;
+    const card  = document.getElementById("card");
+    const btn   = document.getElementById("loginBtn");
+    const errorMsg = document.getElementById("errorMsg");
+
+    errorMsg.style.display = "none";
+
+    if (!email || !pass) {
+        errorMsg.textContent = "Please enter email and password.";
+        errorMsg.style.display = "block";
+        card.classList.add("shake");
+        setTimeout(() => card.classList.remove("shake"), 300);
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Logging in...";
+
+    try {
+        const response = await fetch("http://localhost:5000/api/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, password: pass })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            // Wrong credentials
+            errorMsg.textContent = data.message || "Invalid email or password.";
+            errorMsg.style.display = "block";
+            card.classList.add("shake");
+            setTimeout(() => card.classList.remove("shake"), 300);
+            return;
+        }
+
+        sessionStorage.setItem("auth", "true");
+        sessionStorage.setItem("token", data.token);         // save JWT token
+        sessionStorage.setItem("user", JSON.stringify(data.user)); // save user object
+
+        // Redirect to dashboard
+        window.location.href = "RealDash.html";
+
+    } catch (err) {
+        errorMsg.textContent = "Cannot connect to server. Please try again.";
+        errorMsg.style.display = "block";
+        card.classList.add("shake");
+        setTimeout(() => card.classList.remove("shake"), 300);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Login";
+    }
+}
+
+function toggle() {
+    let p = document.getElementById("pass");
+    p.type = p.type === "password" ? "text" : "password";
+}
+
+function goRegister() {
+    window.location.href = "register.html";
+}
+
+document.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") login();
+});
+</script>
+
+</body>
+</html>
