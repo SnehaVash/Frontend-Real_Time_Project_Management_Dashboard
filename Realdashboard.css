@@ -2421,3 +2421,63 @@ justify-content:center;
 background:#ff4d4f;
 color:white;
 }
+/* ===== CREATE PROJECT MODAL UI ===== */
+
+.modal-overlay{
+position:fixed;
+inset:0;
+background:rgba(2,6,23,.75);
+backdrop-filter: blur(12px);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:9999;
+}
+
+.modal-overlay.open{
+display:flex;
+}
+
+.project-modal{
+width:520px;
+max-width:92%;
+padding:28px;
+border-radius:22px;
+background:linear-gradient(180deg,#0b1220,#020617);
+border:1px solid rgba(139,92,246,.25);
+box-shadow:
+0 0 0 1px rgba(139,92,246,.08),
+0 30px 80px rgba(0,0,0,.8);
+animation:modalIn .25s ease;
+}
+
+@keyframes modalIn{
+from{transform:translateY(15px);opacity:0}
+to{transform:translateY(0);opacity:1}
+}
+/* FIX modal inputs */
+.project-modal input,
+.project-modal textarea,
+.project-modal select{
+width:100%;
+background:#020617 !important;
+border:1px solid rgba(139,92,246,.25) !important;
+padding:12px 14px;
+border-radius:12px;
+color:#e2e8f0 !important;
+font-size:14px;
+margin-bottom:12px;
+}
+
+.project-modal textarea{
+height:90px;
+resize:none;
+}
+
+.project-modal input:focus,
+.project-modal textarea:focus,
+.project-modal select:focus{
+outline:none;
+border-color:#8b5cf6 !important;
+box-shadow:0 0 0 2px rgba(139,92,246,.15);
+}

@@ -1,103 +1,680 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Projects</title>
-<link rel="stylesheet" href="Realdashboard.css">
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects</title>
+    <link rel="stylesheet" href="Realdashboard.css">
+    <style>
+        /* Modal Overlay */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
 
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        /* Modal Box */
+        .project-modal {
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 32px;
+            width: 480px;
+            max-width: 90%;
+            color: white;
+            box-shadow: 0 25px 40px -12px rgba(0,0,0,0.5);
+        }
+
+        .modal h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .modal input,
+        .modal textarea,
+        .modal select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(15, 23, 42, 0.9);
+            color: white;
+            outline: none;
+            margin-bottom: 16px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .modal input:focus,
+        .modal textarea:focus,
+        .modal select:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+        }
+
+        .modal textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal select option {
+            background: #1e293b;
+        }
+
+        .modal-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-row input {
+            flex: 1;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .btn-cancel {
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-create {
+            padding: 10px 24px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.1s ease, opacity 0.2s;
+        }
+
+        .btn-create:hover {
+            opacity: 0.9;
+            transform: scale(0.98);
+        }
+
+        .btn-create:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .modal-error {
+            color: #f87171;
+            font-size: 13px;
+            margin-bottom: 10px;
+            display: none;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border-left: 3px solid #f87171;
+        }
+
+        /* New Project Button */
+        .new-project-btn {
+            padding: 10px 20px;
+            border-radius: 40px;
+            border: none;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+        }
+
+        .new-project-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Priority Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .badge-high {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-medium {
+            background: rgba(234, 179, 8, 0.2);
+            color: #facc15;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .badge-low {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        /* Loading / Empty */
+        .state-msg {
+            color: #94a3b8;
+            font-size: 15px;
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 24px;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        /* Project card styling */
+        .projects-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .project-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 20px 24px;
+            transition: all 0.2s ease;
+        }
+
+        .project-card:hover {
+            background: rgba(30, 41, 59, 0.7);
+            border-color: rgba(139, 92, 246, 0.3);
+            transform: translateX(2px);
+        }
+
+        .project-card-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .project-card-head h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin: 0;
+        }
+
+        .delete-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: #94a3b8;
+        }
+
+        .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+
+        .project-card p {
+            font-size: 14px;
+            color: #cbd5e1;
+            margin: 12px 0;
+            line-height: 1.5;
+        }
+
+        .project-card span:last-child {
+            font-size: 12px;
+            color: #64748b;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 10px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+    </style>
+</head>
 <body>
 
 <div class="shell">
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-dot"></div>
+            RTPM
+        </div>
+        <div class="nav-label">Workspace</div>
+        <a href="index.html" class="nav-item">Overview</a>
+        <a href="projects.html" class="nav-item active">Projects</a>
+        <a href="sprint.html" class="nav-item">Sprint Board</a>
+        <a href="timeline.html" class="nav-item">Timeline</a>
+    </aside>
 
-<aside class="sidebar">
+    <div class="main">
+        <header class="topbar">
+            <div>
+                <div class="page-title">Projects</div>
+                <div class="breadcrumb">All Active Projects</div>
+            </div>
+            <button class="new-project-btn" onclick="openModal()">+ New Project</button>
+        </header>
 
-<div class="logo">
-<div class="logo-dot"></div>
-Orbital
+        <div class="content">
+            <div id="projectsList" class="projects-list"></div>
+        </div>
+    </div>
 </div>
 
-<div class="nav-label">Workspace</div>
+<!-- Create Project Modal -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="project-modal">
+        <h2>✨ Create New Project</h2>
 
-<a href="RealDash.html" class="nav-item">Overview</a>
-<a href="projects.html" class="nav-item active">Projects</a>
-<a href="sprint.html" class="nav-item">Sprint Board</a>
-<a href="timeline.html" class="nav-item">Timeline</a>
+        <input id="projTitle" placeholder="Project Title" autocomplete="off" />
+        <textarea id="projDesc" placeholder="Description (optional)"></textarea>
 
-</aside>
+        <select id="projPriority">
+            <option value="" disabled selected>— Select Priority —</option>
+            <option value="high">🔥 High</option>
+            <option value="medium">⚡ Medium</option>
+            <option value="low">🌱 Low</option>
+        </select>
 
-<div class="main">
+        <div class="modal-row">
+            <input type="date" id="projStart" placeholder="Start Date" />
+            <input type="date" id="projEnd" placeholder="End Date" />
+        </div>
 
-<header class="topbar">
-<div>
-<div class="page-title">Projects</div>
-<div class="breadcrumb">All Active Projects</div>
+        <div class="modal-error" id="modalError"></div>
+
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-create" id="createBtn" onclick="createProject()">Create Project</button>
+        </div>
+    </div>
 </div>
 
-</header>
-
-<div class="content">
-
-<div id="projectsList" class="projects-list"></div>
-
-
-
-</div>
-
-</div>
-</div>
-
-</div>
 <script>
-const projects = JSON.parse(localStorage.getItem("projects")) || [];
+    // --------------------------------------------------------------
+    // CONFIGURATION: Use the same backend as your API spec (port 5000)
+    // If you need to switch between localhost and deployed, change this
+    // For your spec: POST http://localhost:5000/api/projects
+    // Also supports remote render.com but default is local dev
+    // --------------------------------------------------------------
+    const API_BASE = "https://rtpm-dashboard.onrender.com/api";    // matches your local backend
+    // const API_BASE = "https://rtpm-dashboard.onrender.com/api"; // fallback if needed
 
-const container = document.getElementById("projectsList");
+    // Helper: get JWT token from storage
+    function getToken() {
+        return sessionStorage.getItem("token") || localStorage.getItem("token");
+    }
 
-function renderProjects(){
-container.innerHTML = "";
+    // Helper: redirect or show error if unauthorized
+    function handleUnauthorized(res) {
+        if (res.status === 401 || res.status === 403) {
+            alert("Session expired or unauthorized. Please login again.");
+            window.location.href = "login.html";
+            return true;
+        }
+        return false;
+    }
 
-projects.forEach((p,index) => {
+    // ─── FETCH & RENDER PROJECTS ───────────────────────────────────────────────
+    async function loadProjects() {
+        const container = document.getElementById("projectsList");
+        if (!container) return;
+        container.innerHTML = `<div class="state-msg">⏳ Loading projects...</div>`;
 
-const card = document.createElement("div");
-card.className = "project-card";
+        const token = getToken();
+        if (!token) {
+            container.innerHTML = `<div class="state-msg">🔒 No authentication token. Please log in.</div>`;
+            return;
+        }
 
-card.innerHTML = `
-<div class="project-card-head">
-<h3>${p.name}</h3>
+        try {
+            const res = await fetch(`${API_BASE}/projects`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
 
-<button class="delete-btn" onclick="deleteProject(${index})">
-<svg viewBox="0 0 24 24" width="16" height="16" fill="none">
-<path d="M3 6h18" stroke="currentColor" stroke-width="2"/>
-<path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2"/>
-<path d="M6 6l1 14h10l1-14" stroke="currentColor" stroke-width="2"/>
-<path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2"/>
-</svg>
-</button>
+            if (handleUnauthorized(res)) return;
 
-</div>
+            const data = await res.json();
 
-<p>${p.desc}</p>
-<span>${p.date}</span>
-`;
-container.appendChild(card);
+            if (!res.ok) {
+                container.innerHTML = `<div class="state-msg">❌ ${data.message || "Failed to load projects."}</div>`;
+                return;
+            }
 
-});
+            // API may return { projects: [...] } or direct array
+            let projects = Array.isArray(data) ? data : (data.projects || []);
+            
+            if (projects.length === 0) {
+                container.innerHTML = `<div class="state-msg">📭 No projects yet. Click "New Project" to get started.</div>`;
+                return;
+            }
 
-}
+            container.innerHTML = "";
+            projects.forEach(proj => renderCard(proj));
 
-function deleteProject(index){
+        } catch (err) {
+            console.error("Load error:", err);
+            container.innerHTML = `<div class="state-msg">⚠️ Cannot connect to server. Make sure backend is running at ${API_BASE}</div>`;
+        }
+    }
 
-projects.splice(index,1);
+    function renderCard(project) {
+        const container = document.getElementById("projectsList");
+        if (!container) return;
+        
+        const card = document.createElement("div");
+        card.className = "project-card";
+        card.id = `proj-${project._id}`;
 
-localStorage.setItem("projects", JSON.stringify(projects));
+        const start = project.startDate ? project.startDate.slice(0, 10) : "Not set";
+        const end = project.endDate ? project.endDate.slice(0, 10) : "Not set";
+        const priorityClass = project.priority || "medium";
+        const displayPriority = priorityClass.charAt(0).toUpperCase() + priorityClass.slice(1);
+        
+        // Description fallback
+        const descriptionText = project.description && project.description.trim() !== "" 
+            ? project.description 
+            : "No description provided";
 
-renderProjects();
+        card.innerHTML = `
+            <div class="project-card-head">
+                <h3>${escapeHtml(project.title)}</h3>
+                <button class="delete-btn" onclick="deleteProject('${project._id}')" title="Delete project">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M3 6h18" stroke="currentColor" stroke-width="2"/>
+                        <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2"/>
+                        <path d="M6 6l1 14h10l1-14" stroke="currentColor" stroke-width="2"/>
+                        <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </button>
+            </div>
+            <span class="badge badge-${priorityClass}">${displayPriority}</span>
+            <p>${escapeHtml(descriptionText)}</p>
+            <span>📅 ${start} → ${end}</span>
+        `;
+        
+        container.appendChild(card);
+    }
+    
+    // simple XSS protection
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
 
-}
+    // ─── CREATE PROJECT (exactly matches your API spec) ────────────────────
+    function openModal() { 
+        const overlay = document.getElementById("modalOverlay");
+        if (overlay) overlay.classList.add("open");
+        // Reset error on open
+        const errorDiv = document.getElementById("modalError");
+        if (errorDiv) errorDiv.style.display = "none";
+    }
+    
+    function closeModal() { 
+        const overlay = document.getElementById("modalOverlay");
+        if (overlay) overlay.classList.remove("open");
+        clearModal();
+    }
 
-renderProjects();
+    async function createProject() {
+        const title = document.getElementById("projTitle").value.trim();
+        const description = document.getElementById("projDesc").value.trim();
+        const priority = document.getElementById("projPriority").value;
+        const startDate = document.getElementById("projStart").value;
+        const endDate = document.getElementById("projEnd").value;
+        const errorEl = document.getElementById("modalError");
+        const btn = document.getElementById("createBtn");
 
+        if (errorEl) errorEl.style.display = "none";
+
+        // Validation
+        if (!title) {
+            showError("Project title is required.");
+            return;
+        }
+        if (!priority) {
+            showError("Please select a priority level.");
+            return;
+        }
+        if (!startDate) {
+            showError("Start date is required.");
+            return;
+        }
+        if (!endDate) {
+            showError("End date is required.");
+            return;
+        }
+        
+        // Optional: validate date range
+        if (new Date(startDate) > new Date(endDate)) {
+            showError("End date cannot be before start date.");
+            return;
+        }
+
+        const token = getToken();
+        if (!token) {
+            showError("Authentication missing. Please log in again.");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Creating...";
+
+        try {
+            // Construct payload exactly as spec: title, description, priority, startDate, endDate
+            const payload = {
+                title: title,
+                description: description || "",
+                priority: priority,
+                startDate: startDate,
+                endDate: endDate
+            };
+
+            const res = await fetch(`${API_BASE}/projects`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (handleUnauthorized(res)) return;
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                const errorMsg = data.message || data.error || "Failed to create project.";
+                showError(errorMsg);
+                return;
+            }
+
+            // Successful creation: API usually returns the created project object
+            const newProject = data.project || data;   // some backends return direct object
+            if (newProject && newProject._id) {
+                // render new card without full reload
+                closeModal();
+                window.location.reload();
+                // remove empty state message if present
+                const container = document.getElementById("projectsList");
+                const emptyMsg = container.querySelector(".state-msg");
+                if (emptyMsg && container.children.length === 1 && emptyMsg) {
+                    container.innerHTML = "";
+                }
+            } else {
+                // fallback: reload whole list to be safe
+                await loadProjects();
+                closeModal();
+            }
+        } catch (err) {
+            console.error("Create project error:", err);
+            showError("Network error: cannot reach server. Is backend running on port 5000?");
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Create Project";
+        }
+    }
+
+    function showError(msg) {
+        const errorEl = document.getElementById("modalError");
+        if (errorEl) {
+            errorEl.textContent = msg;
+            errorEl.style.display = "block";
+        } else {
+            alert(msg);
+        }
+    }
+
+    function clearModal() {
+        document.getElementById("projTitle").value = "";
+        document.getElementById("projDesc").value = "";
+        document.getElementById("projPriority").value = "";
+        document.getElementById("projStart").value = "";
+        document.getElementById("projEnd").value = "";
+        const errorDiv = document.getElementById("modalError");
+        if (errorDiv) errorDiv.style.display = "none";
+    }
+
+    // ─── DELETE PROJECT (FIXED: dynamic token) ───────────────────────────────
+    async function deleteProject(projectId) {
+        if (!confirm("⚠️ Are you sure you want to delete this project? This action cannot be undone.")) {
+            return;
+        }
+
+        const token = getToken();
+        if (!token) {
+            alert("Authentication missing. Please login again.");
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_BASE}/projects/${projectId}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (res.status === 401 || res.status === 403) {
+                alert("Session expired. Please login again.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            if (res.ok) {
+                // Remove card from DOM
+                const cardElement = document.getElementById(`proj-${projectId}`);
+                if (cardElement) cardElement.remove();
+                
+                // Check if projects list becomes empty, show empty message
+                const container = document.getElementById("projectsList");
+                if (container && container.children.length === 0) {
+                    container.innerHTML = `<div class="state-msg">📭 No projects yet. Create one!</div>`;
+                }
+            } else {
+                const errorData = await res.json().catch(() => ({}));
+                alert(`Delete failed: ${errorData.message || "Unknown error"}`);
+            }
+        } catch (err) {
+            console.error("Delete error:", err);
+            alert("Network error: could not delete project.");
+        }
+    }
+
+    // ─── AUTO-REDIRECT TO LOGIN IF NO TOKEN ON PAGE LOAD ─────────────────────
+    function checkAuthAndLoad() {
+        const token = getToken();
+        if (!token) {
+            const container = document.getElementById("projectsList");
+            if (container) {
+                container.innerHTML = `<div class="state-msg">🔐 Please log in to view projects. <br> <a href="login.html" style="color:#8b5cf6;">Go to Login</a></div>`;
+            }
+            return false;
+        }
+        loadProjects();
+        return true;
+    }
+
+    // Optional: close modal on ESC key
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") {
+            const overlay = document.getElementById("modalOverlay");
+            if (overlay && overlay.classList.contains("open")) {
+                closeModal();
+            }
+        }
+    });
+
+    // Also close if clicking outside modal content
+    const overlayElement = document.getElementById("modalOverlay");
+    if (overlayElement) {
+        overlayElement.addEventListener("click", function(e) {
+            if (e.target === overlayElement) {
+                closeModal();
+            }
+        });
+    }
+
+    // Initialize page
+    checkAuthAndLoad();
 </script>
 </body>
 </html>

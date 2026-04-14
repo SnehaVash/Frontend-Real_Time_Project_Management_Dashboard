@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+<title>RTPM - Project Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400" rel="stylesheet">
+
+<link rel="stylesheet" href="Realdashboard.css">
+
+<style>
+  /* ── New Task Modal ── */
+  .nt-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: ntFadeIn 0.2s ease;
+  }
+  .nt-overlay.open { display: flex; }
+
+  @keyframes ntFadeIn  { from { opacity: 0 } to { opacity: 1 } }
+  @keyframes ntSlideUp { from { opacity: 0; transform: translateY(24px) } to { opacity: 1; transform: translateY(0) } }
+
+  .nt-box {
+    background: #16161f;
+    border: 1px solid rgba(124, 92, 252, 0.28);
+    border-radius: 18px;
+    padding: 34px 36px 30px;
+    width: 100%;
+    max-width: 530px;
+    animation: ntSlideUp 0.25s ease;
+    box-shadow: 0 0 80px rgba(124, 92, 252, 0.12), 0 24px 70px rgba(0,0,0,0.55);
+    position: relative;
+  }
+
+  .nt-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 26px;
+  }
+
+  .nt-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #e8e8f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nt-title span { color: #7c5cfc; font-size: 1rem; }
+
+  .nt-close {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.07);
+    color: #6b6b80;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .nt-close:hover { border-color: #fc5c7d; color: #fc5c7d; }
+
+  .nt-group { margin-bottom: 17px; }
+
+  .nt-label {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: #6b6b80;
+    margin-bottom: 7px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .nt-input,
+  .nt-textarea,
+  .nt-select {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    color: #e8e8f0;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .nt-input::placeholder,
+  .nt-textarea::placeholder { color: #3a3a50; }
+  .nt-input:focus,
+  .nt-textarea:focus,
+  .nt-select:focus {
+    border-color: rgba(124,92,252,0.55);
+    box-shadow: 0 0 0 3px rgba(124,92,252,0.09);
+  }
+  .nt-textarea { resize: vertical; min-height: 78px; }
+  .nt-select option { background: #1a1a24; }
+
+  .nt-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  /* Priority pills */
+  .nt-priority { display: flex; gap: 8px; }
+  .nt-pri-btn {
+    flex: 1;
+    padding: 8px 6px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.07);
+    background: transparent;
+    color: #6b6b80;
+    font-size: 0.75rem;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .nt-pri-btn.sel-high   { border-color: #fc5c7d; color: #fc5c7d; background: rgba(252,92,125,0.1); }
+  .nt-pri-btn.sel-medium { border-color: #fcb95c; color: #fcb95c; background: rgba(252,185,92,0.1); }
+  .nt-pri-btn.sel-low    { border-color: #5cf0c8; color: #5cf0c8; background: rgba(92,240,200,0.1); }
+
+  /* Hint text */
+  .nt-hint { font-size: 0.68rem; color: #3e3e55; margin-top: 5px; font-family: 'DM Sans', sans-serif; }
+
+  /* Footer buttons */
+  .nt-footer { display: flex; gap: 10px; margin-top: 26px; }
+
+  .nt-btn-cancel {
+    flex: 1;
+    padding: 11px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.07);
+    background: transparent;
+    color: #6b6b80;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .nt-btn-cancel:hover { border-color: rgba(255,255,255,0.2); color: #e8e8f0; }
+
+  .nt-btn-submit {
+    flex: 2;
+    padding: 11px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #7c5cfc, #5c3dfc);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .nt-btn-submit:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+  .nt-btn-submit:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  .nt-spinner {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: ntSpin 0.6s linear infinite;
+    display: none;
+  }
+  @keyframes ntSpin { to { transform: rotate(360deg) } }
+
+  /* Toast */
+  .nt-toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    padding: 13px 22px;
+    border-radius: 11px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    z-index: 9999;
+    animation: ntSlideUp 0.2s ease;
+    pointer-events: none;
+  }
+  .nt-toast.success {
+    background: rgba(92,240,200,0.12);
+    border: 1px solid #5cf0c8;
+    color: #5cf0c8;
+  }
+  .nt-toast.error {
+    background: rgba(252,92,125,0.12);
+    border: 1px solid #fc5c7d;
+    color: #fc5c7d;
+  }
+
+  /* Create Project Modal (original) */
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(6px);
+    align-items: center;
+    justify-content: center;
+    z-index: 1500;
+  }
+  .modal.open { display: flex; }
+  .modal-box {
+    background: #16161f;
+    border: 1px solid rgba(124,92,252,0.25);
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+    max-width: 460px;
+    animation: ntSlideUp 0.25s ease;
+  }
+  .modal-box h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #e8e8f0;
+  }
+  .modal-box input,
+  .modal-box textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    color: #e8e8f0;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    padding: 10px 14px;
+    outline: none;
+    margin-bottom: 14px;
+    transition: border-color 0.15s;
+  }
+  .modal-box input:focus,
+  .modal-box textarea:focus { border-color: rgba(124,92,252,0.5); }
+  .modal-box textarea { resize: vertical; min-height: 80px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 6px; }
+  .modal-actions button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 9px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+  }
+  .modal-actions button:first-child { background: #7c5cfc; color: #fff; font-weight: 600; }
+  .modal-actions button:last-child  { background: rgba(255,255,255,0.06); color: #6b6b80; }
+  .modal-actions button:hover { opacity: 0.85; }
+</style>
+</head>
+
+<body>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <div class="shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-dot"></div>
+        RTPM
+      </div>
+
+      <div class="nav-label">Workspace</div>
+      <a href="index.html" class="nav-item active">
+        <span class="nav-icon">◇</span> Overview
+      </a>
+      <a href="projects.html" class="nav-item">
+        <span class="nav-icon">◈</span> Projects
+      </a>
+      <a href="sprint.html" class="nav-item">
+        <span class="nav-icon">◻</span> Sprint Board
+      </a>
+      <a href="timeline.html" class="nav-item">
+        <span class="nav-icon">◷</span> Timeline
+      </a>
+
+      <div class="nav-label">Manage</div>
+      <a href="team.html" class="nav-item">
+        <span class="nav-icon">◌</span> Team
+      </a>
+      <a href="reports.html" class="nav-item">
+        <span class="nav-icon">◌</span> Reports
+      </a>
+      <a href="goals.html" class="nav-item">
+        <span class="nav-icon">◎</span> Goals
+      </a>
+
+      <div class="nav-label">Tools</div>
+      <a href="docs.html" class="nav-item">
+        <span class="nav-icon">◆</span> Docs
+      </a>
+      <a href="settings.html" class="nav-item">
+        <span class="nav-icon">⚙</span> Settings
+      </a>
+
+      <div class="sidebar-bottom">
+        <div class="user-card">
+          <div class="avatar">AK</div>
+          <div class="user-info">
+            <div class="user-name">Aryan Kumar</div>
+            <div class="user-role">Product Lead</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main area -->
+    <div class="main">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <div>
+          <div class="page-title">Dashboard</div>
+          <div class="breadcrumb">Q2 2026 · Sprint 14</div>
+        </div>
+        <div class="topbar-actions">
+          <div class="live-badge">
+            <div class="live-dot"></div> LIVE
+          </div>
+          <a href="filter.html" class="btn btn-ghost">⚙ Filter</a>
+          <a href="#" class="btn btn-primary" onclick="openProjectModal()">+ Create Project</a>
+          <!-- ↓ Changed: was a link to newtask.html, now opens modal -->
+          <button class="btn btn-primary" onclick="openNewTaskModal()">+ New Task</button>
+        </div>
+      </header>
+
+      <!-- Real-time ticker -->
+      <div class="ticker">
+        <span class="ticker-label">● LIVE</span>
+        <div class="ticker-text">
+          <span class="ticker-inner">
+            Priya merged PR #284 "Auth refactor" · Rohan moved "API Gateway" to Review · Deployment to staging succeeded
+            · Meera opened Bug #119 · Sprint velocity at 94% · Zara completed "Dark mode UI" · 3 PRs awaiting review
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Priya merged PR #284 "Auth refactor" · Rohan moved "API Gateway" to
+            Review · Deployment to staging succeeded ·
+          </span>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card c1">
+            <div class="stat-icon">◈</div>
+            <div class="stat-value" id="s1">48</div>
+            <div class="stat-label">Active Tasks</div>
+            <div class="stat-change up">↑ 12% from last sprint</div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width:72%; background: var(--accent);"></div>
+            </div>
+          </div>
+          <div class="stat-card c2">
+            <div class="stat-icon">◉</div>
+            <div class="stat-value" id="s2">7</div>
+            <div class="stat-label">Bugs Open</div>
+            <div class="stat-change down">↑ 3 since yesterday</div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width:28%; background: var(--accent2);"></div>
+            </div>
+          </div>
+          <div class="stat-card c3">
+            <div class="stat-icon">◷</div>
+            <div class="stat-value" id="s3">94<span style="font-size:1.1rem;font-weight:400">%</span></div>
+            <div class="stat-label">Sprint Velocity</div>
+            <div class="stat-change up">↑ 8% above target</div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width:94%; background: var(--accent3);"></div>
+            </div>
+          </div>
+          <div class="stat-card c4">
+            <div class="stat-icon">◑</div>
+            <div class="stat-value" id="s4">12</div>
+            <div class="stat-label">Team Members</div>
+            <div class="stat-change up">9 active now</div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="width:75%; background: var(--accent4);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main grid: Sprint board + Activity -->
+        <div class="main-grid">
+
+          <!-- Sprint board -->
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">Sprint Board</div>
+              <span class="panel-meta">Sprint 14 · ends Apr 11</span>
+            </div>
+            <div class="sprint-board">
+
+              <!-- To Do -->
+              <div class="sprint-col">
+                <div class="sprint-col-title" style="color:var(--muted)">To Do <span class="col-count">5</span></div>
+
+                <div class="task-card">
+                  <div class="task-tag tag-feature">Feature</div>
+                  <div class="task-title">Implement OAuth 2.0 flow with Google SSO</div>
+                  <div class="task-foot">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#7c5cfc,#fc5c7d)">AK</div>
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#5cf0c8,#7c5cfc)">PR</div>
+                    </div>
+                    <div class="task-due">Apr 8</div>
+                  </div>
+                </div>
+
+                <div class="task-card">
+                  <div class="task-tag tag-design">Design</div>
+                  <div class="task-title">Redesign onboarding modal with new brand</div>
+                  <div class="task-foot">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#fcb95c,#fc5c7d)">ZR</div>
+                    </div>
+                    <div class="task-due">Apr 9</div>
+                  </div>
+                </div>
+
+                <div class="task-card">
+                  <div class="task-tag tag-infra">Infra</div>
+                  <div class="task-title">Set up Redis caching layer for session data</div>
+                  <div class="task-foot">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#5cf0c8,#fcb95c)">MV</div>
+                    </div>
+                    <div class="task-due soon">Apr 5</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- In Progress -->
+              <div class="sprint-col">
+                <div class="sprint-col-title" style="color:var(--accent)">In Progress <span class="col-count">4</span></div>
+
+                <div class="task-card" style="border-color:rgba(124,92,252,0.2)">
+                  <div class="task-tag tag-feature">Feature</div>
+                  <div class="task-title">API Gateway rate limiting & throttle rules</div>
+                  <div class="prog-bar">
+                    <div class="prog-fill" style="width:65%;background:var(--accent)"></div>
+                  </div>
+                  <div class="task-foot" style="margin-top:8px">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#fc5c7d,#fcb95c)">RH</div>
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#7c5cfc,#5cf0c8)">AK</div>
+                    </div>
+                    <div class="task-due">65%</div>
+                  </div>
+                </div>
+
+                <div class="task-card" style="border-color:rgba(124,92,252,0.2)">
+                  <div class="task-tag tag-bug">Bug</div>
+                  <div class="task-title">Fix race condition in payment webhook handler</div>
+                  <div class="prog-bar">
+                    <div class="prog-fill" style="width:40%;background:var(--accent2)"></div>
+                  </div>
+                  <div class="task-foot" style="margin-top:8px">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#5cf0c8,#7c5cfc)">PR</div>
+                    </div>
+                    <div class="task-due overdue">Overdue</div>
+                  </div>
+                </div>
+
+                <div class="task-card" style="border-color:rgba(124,92,252,0.2)">
+                  <div class="task-tag tag-design">Design</div>
+                  <div class="task-title">Dark mode — component token pass</div>
+                  <div class="prog-bar">
+                    <div class="prog-fill" style="width:88%;background:var(--accent4)"></div>
+                  </div>
+                  <div class="task-foot" style="margin-top:8px">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#fcb95c,#5cf0c8)">ZR</div>
+                    </div>
+                    <div class="task-due">88%</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Done -->
+              <div class="sprint-col">
+                <div class="sprint-col-title" style="color:var(--accent3)">Done <span class="col-count">6</span></div>
+
+                <div class="task-card" style="opacity:0.7">
+                  <div class="task-tag tag-feature">Feature</div>
+                  <div class="task-title">Search indexing with Elasticsearch</div>
+                  <div class="task-foot">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#5cf0c8,#7c5cfc)">MV</div>
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#7c5cfc,#fc5c7d)">AK</div>
+                    </div>
+                    <div class="task-due" style="color:var(--accent3)">✓ Done</div>
+                  </div>
+                </div>
+
+                <div class="task-card" style="opacity:0.7">
+                  <div class="task-tag tag-infra">Infra</div>
+                  <div class="task-title">CI/CD pipeline migration to GitHub Actions</div>
+                  <div class="task-foot">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#fc5c7d,#fcb95c)">RH</div>
+                    </div>
+                    <div class="task-due" style="color:var(--accent3)">✓ Done</div>
+                  </div>
+                </div>
+
+                <div class="task-card" style="opacity:0.7">
+                  <div class="task-tag tag-bug">Bug</div>
+                  <div class="task-title">Memory leak in WebSocket event emitter</div>
+                  <div class="task-foot">
+                    <div class="task-avatars">
+                      <div class="task-avatar" style="background:linear-gradient(135deg,#5cf0c8,#fcb95c)">PR</div>
+                    </div>
+                    <div class="task-due" style="color:var(--accent3)">✓ Done</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity feed -->
+          <div class="panel" style="animation-delay:0.3s">
+            <div class="panel-head">
+              <div class="panel-title">Live Activity</div>
+              <div class="live-badge" style="font-size:0.65rem;padding:3px 8px">
+                <div class="live-dot"></div>9 online
+              </div>
+            </div>
+            <div class="activity-feed" id="activityFeed">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom row -->
+        <div class="bottom-grid">
+
+          <!-- Team -->
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">Team Status</div>
+              <span class="panel-meta">12 members</span>
+            </div>
+            <table class="team-table">
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Role</th>
+                  <th>Tasks</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="member-cell">
+                      <div class="member-av" style="background:linear-gradient(135deg,#7c5cfc,#fc5c7d)">AK</div>Aryan Kumar
+                    </div>
+                  </td>
+                  <td style="color:var(--muted);font-size:0.75rem">PM</td>
+                  <td>8</td>
+                  <td><span class="status-pill s-active"><span class="dot"></span>Active</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="member-cell">
+                      <div class="member-av" style="background:linear-gradient(135deg,#5cf0c8,#7c5cfc)">PR</div>Priya Rao
+                    </div>
+                  </td>
+                  <td style="color:var(--muted);font-size:0.75rem">Backend</td>
+                  <td>6</td>
+                  <td><span class="status-pill s-active"><span class="dot"></span>Active</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="member-cell">
+                      <div class="member-av" style="background:linear-gradient(135deg,#fcb95c,#fc5c7d)">ZR</div>Zara Rashid
+                    </div>
+                  </td>
+                  <td style="color:var(--muted);font-size:0.75rem">Design</td>
+                  <td>4</td>
+                  <td><span class="status-pill s-active"><span class="dot"></span>Active</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="member-cell">
+                      <div class="member-av" style="background:linear-gradient(135deg,#fc5c7d,#fcb95c)">RH</div>Rohan Hegde
+                    </div>
+                  </td>
+                  <td style="color:var(--muted);font-size:0.75rem">Frontend</td>
+                  <td>5</td>
+                  <td><span class="status-pill s-away"><span class="dot"></span>In meeting</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="member-cell">
+                      <div class="member-av" style="background:linear-gradient(135deg,#5cf0c8,#fcb95c)">MV</div>Meera Varma
+                    </div>
+                  </td>
+                  <td style="color:var(--muted);font-size:0.75rem">DevOps</td>
+                  <td>3</td>
+                  <td><span class="status-pill s-offline"><span class="dot"></span>Offline</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Velocity chart -->
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">Sprint Velocity</div>
+              <span class="panel-meta">Last 7 sprints</span>
+            </div>
+            <div class="chart-wrap">
+              <div class="bar-chart" id="barChart"></div>
+              <div class="chart-labels" id="chartLabels"></div>
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <div class="legend-dot" style="background:var(--accent)"></div>Completed
+                </div>
+                <div class="legend-item">
+                  <div class="legend-dot" style="background:rgba(252,92,125,0.5)"></div>Scope added
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       NEW TASK MODAL
+  ══════════════════════════════════════════ -->
+  <div id="newTaskModal" class="nt-overlay" onclick="handleOverlayClick(event)">
+    <div class="nt-box">
+
+      <div class="nt-header">
+        <div class="nt-title"><span>◈</span> New Task</div>
+        <button class="nt-close" onclick="closeNewTaskModal()">✕</button>
+      </div>
+
+      <!-- Title -->
+      <div class="nt-group">
+        <label class="nt-label">Title <span style="color:#fc5c7d">*</span></label>
+        <input class="nt-input" id="ntTitle" type="text" placeholder="e.g. Design Database Schema" />
+      </div>
+
+      <!-- Description -->
+      <div class="nt-group">
+        <label class="nt-label">Description</label>
+        <textarea class="nt-textarea" id="ntDesc" placeholder="What needs to be done?"></textarea>
+      </div>
+
+      <!-- Status + Due Date -->
+      <div class="nt-row">
+        <div class="nt-group">
+          <label class="nt-label">Status</label>
+          <select class="nt-select" id="ntStatus">
+            <option value="todo">To Do</option>
+            <option value="in-progress">In Progress</option>
+            <option value="review">In Review</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+        <div class="nt-group">
+          <label class="nt-label">Due Date</label>
+          <input class="nt-input" id="ntDue" type="date" />
+        </div>
+      </div>
+
+      <!-- Priority -->
+      <div class="nt-group">
+        <label class="nt-label">Priority</label>
+        <div class="nt-priority">
+          <button class="nt-pri-btn sel-high" id="pri-high"   onclick="setPriority('high')">🔴 High</button>
+          <button class="nt-pri-btn"           id="pri-medium" onclick="setPriority('medium')">🟡 Medium</button>
+          <button class="nt-pri-btn"           id="pri-low"    onclick="setPriority('low')">🟢 Low</button>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="nt-footer">
+        <button class="nt-btn-cancel" onclick="closeNewTaskModal()">Cancel</button>
+        <button class="nt-btn-submit" id="ntSubmitBtn" onclick="submitNewTask()">
+          <div class="nt-spinner" id="ntSpinner"></div>
+          <span id="ntBtnLabel">+ Create Task</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       CREATE PROJECT MODAL (original)
+  ══════════════════════════════════════════ -->
+  <div id="projectModal" class="modal">
+    <div class="modal-box">
+      <h2>Create Project</h2>
+      <input type="text" id="projectName" placeholder="Project Name">
+      <textarea id="projectDesc" placeholder="Project Description"></textarea>
+      <div class="modal-actions">
+        <button onclick="createProject()">Create</button>
+        <button onclick="closeProjectModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="Realtime.js"></script>
+
+  <script>
+    /* ── Auth guard ── */
+    if (sessionStorage.getItem("auth") !== "true") {
+      window.location.href = "login.html";
+    }
+
+    /* ══════════════════════════════════════════
+       NEW TASK MODAL — logic
+    ══════════════════════════════════════════ */
+    let ntPriority = 'high';
+
+    function openNewTaskModal() {
+      document.getElementById('newTaskModal').classList.add('open');
+      document.getElementById('ntTitle').focus();
+    }
+
+    function closeNewTaskModal() {
+      document.getElementById('newTaskModal').classList.remove('open');
+      resetNewTaskForm();
+    }
+
+    /* Close when clicking outside the box */
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('newTaskModal')) {
+        closeNewTaskModal();
+      }
+    }
+
+    /* Close with Escape key */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closeNewTaskModal();
+        closeProjectModal();
+      }
+    });
+
+    function setPriority(p) {
+      ntPriority = p;
+      ['high', 'medium', 'low'].forEach(function (level) {
+        const btn = document.getElementById('pri-' + level);
+        btn.className = 'nt-pri-btn' + (level === p ? ' sel-' + level : '');
+      });
+    }
+
+    function resetNewTaskForm() {
+      document.getElementById('ntTitle').value = '';
+      document.getElementById('ntDesc').value = '';
+      document.getElementById('ntStatus').value = 'todo';
+      document.getElementById('ntDue').value = '';
+      setPriority('high');
+    }
+
+    function showToast(msg, type) {
+      /* Remove any existing toast */
+      const old = document.querySelector('.nt-toast');
+      if (old) old.remove();
+
+      const t = document.createElement('div');
+      t.className = 'nt-toast ' + type;
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(function () { if (t.parentNode) t.remove(); }, 3800);
+    }
+
+    async function submitNewTask() {
+      const title     = document.getElementById('ntTitle').value.trim();
+      const desc      = document.getElementById('ntDesc').value.trim();
+      const status    = document.getElementById('ntStatus').value;
+      const dueDate   = document.getElementById('ntDue').value;
+      const token     = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZGE4NzRjN2FkMTg1YTUzM2I4NjM2MSIsInJvbGUiOiJtYW5hZ2VyIiwiaWF0IjoxNzc2MDA4MzM3LCJleHAiOjE3NzYwOTQ3Mzd9.XUSUcBKeO9SPfofdLH6hskWzMg_DY_VBPNT2MvWzx5k";
+
+      /* Validation */
+      if (!title) {
+        showToast('⚠ Title is required', 'error');
+        document.getElementById('ntTitle').focus();
+        return;
+      }
+
+      /* Loading state */
+      const btn     = document.getElementById('ntSubmitBtn');
+      const spinner = document.getElementById('ntSpinner');
+      const label   = document.getElementById('ntBtnLabel');
+      btn.disabled          = true;
+      spinner.style.display = 'block';
+      label.textContent     = 'Creating…';
+
+      /* Build payload — only include optional fields if they have values */
+      const payload = {
+        title:       title,
+        description: desc,
+        priority:    ntPriority,
+        status:      status
+      };
+      if (dueDate)   payload.dueDate   = dueDate;
+
+      try {
+        const res = await fetch('https://rtpm-dashboard.onrender.com/api/tasks', {
+          method:  'POST',
+          headers: {
+            'Content-Type':  'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify(payload)
+        });
+
+        /* Try to parse JSON response for error details */
+        let data = {};
+        try { data = await res.json(); } catch (_) { /* non-JSON body */ }
+
+        if (!res.ok) {
+          throw new Error(data.message || data.error || ('HTTP ' + res.status));
+        }
+
+        showToast('✓ Task "' + title + '" created!', 'success');
+        closeNewTaskModal();
+
+      } catch (err) {
+        /* Network error (server offline) gives a generic message */
+        const msg = err.message === 'Failed to fetch'
+          ? 'Cannot reach server — is localhost:5000 running?'
+          : err.message;
+        showToast('✗ ' + msg, 'error');
+      } finally {
+        btn.disabled          = false;
+        spinner.style.display = 'none';
+        label.textContent     = '+ Create Task';
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       CREATE PROJECT MODAL — original logic
+    ══════════════════════════════════════════ */
+    function openProjectModal() {
+      document.getElementById('projectModal').classList.add('open');
+    }
+
+    function closeProjectModal() {
+      document.getElementById('projectModal').classList.remove('open');
+    }
+
+    function createProject() {
+      const name = document.getElementById('projectName').value.trim();
+      const desc = document.getElementById('projectDesc').value.trim();
+      if (!name) { showToast('⚠ Project name is required', 'error'); return; }
+      /* TODO: wire up your project API here the same way */
+      showToast('✓ Project "' + name + '" created!', 'success');
+      closeProjectModal();
+    }
+  </script>
+
+</body>
+</html>
