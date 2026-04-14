@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+<title>RTPM - Project Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400" rel="stylesheet">
+
+<link rel="stylesheet" href="Realdashboard.css">
+</head>
+
+<body>
+
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <div class="shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-dot"></div>
+        RTPM
+      </div>
+
+      <div class="nav-label">Workspace</div>
+      <a href="RealDash.html" class="nav-item active">
+        <span class="nav-icon">◇</span> Overview
+      </a>
+      <a href="projects.html" class="nav-item">
+        <span class="nav-icon">◈</span> Projects
+      </a>
+      <a href="sprint.html" class="nav-item">
+        <span class="nav-icon">◻</span> Sprint Board
+      </a>
+      <a href="timeline.html" class="nav-item">
+        <span class="nav-icon">◷</span> Timeline
+      </a>
+
+      <div class="nav-label">Manage</div>
+
+      <a href="team.html" class="nav-item">
+        <span class="nav-icon">◌</span> Team
+      </a>
+
+      <a href="reports.html" class="nav-item">
+        <span class="nav-icon">◌</span> Reports
+      </a>
+
+      <a href="goals.html" class="nav-item">
+        <span class="nav-icon">◎</span> Goals
+      </a>
+
+      <div class="nav-label">Tools</div>
+
+      <a href="docs.html" class="nav-item">
+        <span class="nav-icon">◆</span> Docs
+      </a>
+
+      <a href="settings.html" class="nav-item">
+        <span class="nav-icon">⚙</span> Settings
+      </a>
+
+      <div class="sidebar-bottom">
+        <div class="user-card">
+          <div class="avatar" id="userAvatar">U</div>
+          <div class="user-info">
+            <div class="user-name" id="userName">User</div>
+            <div class="user-role" id="userRole">Member</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main area -->
+    <div class="main">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <div>
+          <div class="page-title">Dashboard</div>
+          <div class="breadcrumb">Q2 2026 · Sprint 14</div>
+        </div>
+
+        <div class="topbar-actions">
+          <div class="live-badge">
+            <div class="live-dot"></div> LIVE
+          </div>
+
+          <a href="filter.html" class="btn btn-ghost">⚙ Filter</a>
+          <a href="#" class="btn btn-primary" onclick="openProjectModal()">+ Create Project</a>
+          <a href="newtask.html" class="btn btn-primary">+ New Task</a>
+        </div>
+      </header>
+
+      <!-- ticker -->
+      <div class="ticker">
+        <span class="ticker-label">● LIVE</span>
+        <div class="ticker-text">
+          <span class="ticker-inner">
+            Priya merged PR #284 "Auth refactor" · Rohan moved API Gateway · Deployment succeeded
+          </span>
+        </div>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="content">
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card c1">
+            <div class="stat-icon">◈</div>
+            <div class="stat-value" id="s1">48</div>
+            <div class="stat-label">Active Tasks</div>
+          </div>
+
+          <div class="stat-card c2">
+            <div class="stat-icon">◉</div>
+            <div class="stat-value" id="s2">7</div>
+            <div class="stat-label">Bugs Open</div>
+          </div>
+
+          <div class="stat-card c3">
+            <div class="stat-icon">◷</div>
+            <div class="stat-value" id="s3">94%</div>
+            <div class="stat-label">Sprint Velocity</div>
+          </div>
+
+          <div class="stat-card c4">
+            <div class="stat-icon">◑</div>
+            <div class="stat-value" id="s4">12</div>
+            <div class="stat-label">Team Members</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div id="projectModal" class="modal">
+    <div class="modal-box">
+      <h2>Create Project</h2>
+
+      <input type="text" id="projectName" placeholder="Project Name">
+      <textarea id="projectDesc" placeholder="Project Description"></textarea>
+
+      <div class="modal-actions">
+        <button onclick="createProject()">Create</button>
+        <button onclick="closeProjectModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTH -->
+  <script src="authGuard.js"></script>
+
+  <!-- MAIN SCRIPT -->
+  <script src="Realtime.js"></script>
+
+  <!-- USER DYNAMIC DATA -->
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const user = JSON.parse(sessionStorage.getItem("user"));
+
+  if (user) {
+    document.getElementById("userName").textContent = user.name || "User";
+    document.getElementById("userRole").textContent = user.role || "Member";
+    document.getElementById("userAvatar").textContent = (user.name || "U")[0].toUpperCase();
+  }
+});
+  </script>
+
+</body>
+
+</html>

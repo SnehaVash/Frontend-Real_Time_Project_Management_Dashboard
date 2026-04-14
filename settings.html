@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings</title>
+
+<link rel="stylesheet" href="Realdashboard.css">
+</head>
+
+<body>
+
+<div class="shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+
+    <div class="logo">
+      <div class="logo-dot"></div>
+      RTPM
+    </div>
+
+    <div class="nav-label">Workspace</div>
+
+    <a href="RealDash.html" class="nav-item">Overview</a>
+    <a href="projects.html" class="nav-item">Projects</a>
+    <a href="sprint.html" class="nav-item">Sprint Board</a>
+    <a href="timeline.html" class="nav-item">Timeline</a>
+
+    <div class="nav-label">Manage</div>
+
+    <a href="team.html" class="nav-item">Team</a>
+    <a href="reports.html" class="nav-item">Reports</a>
+    <a href="goals.html" class="nav-item">Goals</a>
+
+    <div class="nav-label">Tools</div>
+
+    <a href="docs.html" class="nav-item">Docs</a>
+    <a href="settings.html" class="nav-item active">Settings</a>
+
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+
+    <header class="topbar">
+      <div>
+        <div class="page-title">Settings</div>
+        <div class="breadcrumb">Manage your preferences</div>
+      </div>
+
+      <button class="save-btn" onclick="saveAllSettings()">Save Changes</button>
+    </header>
+
+    <div class="content">
+
+      <!-- Profile -->
+      <div class="profile-card" id="profileCard">
+        <div class="profile-left">
+          <div class="profile-avatar">AK</div>
+          <div>
+            <h3 class="profile-name">User</h3>
+            <div id="onlineBadge" class="online-badge">● Online</div>
+          </div>
+        </div>
+        <button class="edit-profile-btn" id="editProfileBtn">Edit Profile</button>
+      </div>
+
+      <!-- Settings -->
+      <div class="settings-grid">
+
+        <!-- Visibility -->
+        <div class="settings-card">
+          <div>
+            <h3>Account Visibility</h3>
+            <p id="visibilityStatus">Profile is Public</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="visibilityToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Online -->
+        <div class="settings-card">
+          <div>
+            <h3>Online Status</h3>
+            <p id="onlineStatusText">You appear online</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="onlineToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Focus -->
+        <div class="settings-card">
+          <div>
+            <h3>Focus Mode</h3>
+            <p>Hide sidebar for distraction free view</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="focusToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal" id="profileModal" style="display:none">
+  <div class="modal-content">
+
+    <h2>Edit Profile</h2>
+
+    <label>Name</label>
+    <input type="text" id="profileName" value="User">
+
+    <label>Role</label>
+    <input type="text" id="profileRole" value="Member">
+
+    <div class="modal-buttons">
+      <button class="save-btn" id="saveProfile">Save</button>
+      <button id="closeProfile">Cancel</button>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+if(sessionStorage.getItem("auth") !== "true"){
+  window.location.href = "login.html";
+}
+</script>
+
+<script>
+const profileCard = document.getElementById("profileCard");
+
+// Load saved data
+window.addEventListener("load", () => {
+
+  const name = localStorage.getItem("profileName");
+  const role = localStorage.getItem("profileRole");
+
+  if(name) document.querySelector(".profile-name").innerText = name;
+  if(role) document.querySelector(".profile-role").innerText = role;
+
+  // visibility
+  const visibility = localStorage.getItem("visibility");
+  const vToggle = document.getElementById("visibilityToggle");
+
+  if(visibility === "private"){
+    vToggle.checked = false;
+    profileCard.style.opacity = "0.4";
+    document.getElementById("visibilityStatus").innerText = "Profile is Private";
+  } else {
+    vToggle.checked = true;
+    profileCard.style.opacity = "1";
+    document.getElementById("visibilityStatus").innerText = "Profile is Public";
+  }
+
+  // online
+  const online = localStorage.getItem("onlineStatus");
+  const oToggle = document.getElementById("onlineToggle");
+
+  if(online === "off"){
+    oToggle.checked = false;
+    document.getElementById("onlineBadge").style.display = "none";
+  } else {
+    oToggle.checked = true;
+    document.getElementById("onlineBadge").style.display = "block";
+  }
+
+  // focus
+  const focus = localStorage.getItem("focus");
+  const fToggle = document.getElementById("focusToggle");
+
+  if(focus === "on"){
+    document.body.classList.add("focus-mode");
+    fToggle.checked = true;
+  }
+
+});
+
+// Visibility toggle
+document.getElementById("visibilityToggle").addEventListener("change", function(){
+  if(this.checked){
+    localStorage.setItem("visibility","public");
+    profileCard.style.opacity = "1";
+    document.getElementById("visibilityStatus").innerText = "Profile is Public";
+  } else {
+    localStorage.setItem("visibility","private");
+    profileCard.style.opacity = "0.4";
+    document.getElementById("visibilityStatus").innerText = "Profile is Private";
+  }
+});
+
+// Online toggle
+document.getElementById("onlineToggle").addEventListener("change", function(){
+  if(this.checked){
+    localStorage.setItem("onlineStatus","on");
+    document.getElementById("onlineBadge").style.display = "block";
+  } else {
+    localStorage.setItem("onlineStatus","off");
+    document.getElementById("onlineBadge").style.display = "none";
+  }
+});
+
+// Focus toggle
+document.getElementById("focusToggle").addEventListener("change", function(){
+  if(this.checked){
+    document.body.classList.add("focus-mode");
+    localStorage.setItem("focus","on");
+  } else {
+    document.body.classList.remove("focus-mode");
+    localStorage.setItem("focus","off");
+  }
+});
+
+
+document.getElementById("editProfileBtn").onclick = () => {
+  document.getElementById("profileModal").style.display = "flex";
+};
+
+document.getElementById("closeProfile").onclick = () => {
+  document.getElementById("profileModal").style.display = "none";
+};
+
+document.getElementById("saveProfile").onclick = () => {
+
+  const name = document.getElementById("profileName").value;
+  const role = document.getElementById("profileRole").value;
+
+  document.querySelector(".profile-name").innerText = name;
+
+  localStorage.setItem("profileName", name);
+  localStorage.setItem("profileRole", role);
+
+  document.getElementById("profileModal").style.display = "none";
+};
+</script>
+
+</body>
+</html>

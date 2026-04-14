@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects</title>
+<link rel="stylesheet" href="Realdashboard.css">
+</head>
+
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo"><div class="logo-dot"></div>RTPM</div>
+    <div class="nav-label">Workspace</div>
+    <a href="RealDash.html" class="nav-item">Overview</a>
+    <a href="projects.html" class="nav-item active">Projects</a>
+    <a href="sprint.html" class="nav-item">Sprint Board</a>
+    <a href="timeline.html" class="nav-item">Timeline</a>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="page-title">Projects</div>
+        <div class="breadcrumb">All Active Projects</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal()">+ New Project</button>
+    </header>
+
+    <div class="content">
+      <div id="loadingMsg" style="color:#aaa;padding:20px">Loading projects...</div>
+      <div id="projectsList" class="projects-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="projectModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);
+justify-content:center;align-items:center;z-index:999;">
+  
+  <div style="background:#1e293b;padding:30px;border-radius:16px;width:400px;color:white">
+    <h2 style="margin-bottom:20px">Create Project</h2>
+
+    <input id="projectName" placeholder="Project Name"
+      style="width:100%;padding:12px;border-radius:8px;
+      border:1px solid rgba(255,255,255,0.1);
+      background:rgba(255,255,255,0.08);color:white;margin-bottom:12px">
+
+    <textarea id="projectDesc" placeholder="Description"
+      style="width:100%;padding:12px;border-radius:8px;
+      border:1px solid rgba(255,255,255,0.1);
+      background:rgba(255,255,255,0.08);color:white;height:100px;margin-bottom:12px"></textarea>
+
+    <select id="projectPriority"
+      style="width:100%;padding:12px;border-radius:8px;
+      border:1px solid rgba(255,255,255,0.1);
+      background:#1e293b;color:white;margin-bottom:20px">
+
+      <option value="low">Low Priority</option>
+      <option value="medium" selected>Medium Priority</option>
+      <option value="high">High Priority</option>
+    </select>
+
+    <div id="modalError" style="color:#f87171;font-size:13px;margin-bottom:10px;display:none"></div>
+
+    <div style="display:flex;gap:10px">
+      <button onclick="createProject()" class="btn btn-primary" style="flex:1">Create</button>
+      <button onclick="closeModal()" class="btn btn-ghost" style="flex:1">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORTANT: API FILE -->
+<script src="api.js"></script>
+
+<script>
+const BASE_URL = "https://rtpm-dashboard.onrender.com";
+
+// Auth check
+if (sessionStorage.getItem("auth") !== "true") {
+  window.location.href = "login.html";
+}
+
+// LOAD PROJECTS (UPDATED)
+async function loadProjects() {
+  try {
+    const data = await apiRequest("/api/projects");
+
+    document.getElementById("loadingMsg").style.display = "none";
+    renderProjects(data);
+
+  } catch (err) {
+    document.getElementById("loadingMsg").textContent =
+      "Failed to load projects.";
+  }
+}
+
+function renderProjects(projects) {
+  const container = document.getElementById("projectsList");
+  container.innerHTML = "";
+
+  if (!projects || projects.length === 0) {
+    container.innerHTML = `<p style="color:#aaa;padding:20px">No projects yet. Create one!</p>`;
+    return;
+  }
+
+  projects.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "project-card";
+
+    card.innerHTML = `
+      <div class="project-card-head">
+        <h3>${p.title}</h3>
+        <button onclick="deleteProject('${p._id}')">🗑</button>
+      </div>
+
+      <p>${p.description || ""}</p>
+
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <span style="color:#8b5cf6;font-size:12px">● ${p.status}</span>
+        <span style="color:#aaa;font-size:12px">Priority: ${p.priority}</span>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+// CREATE PROJECT (UPDATED)
+async function createProject() {
+  const name = document.getElementById("projectName").value.trim();
+  const desc = document.getElementById("projectDesc").value.trim();
+  const priority = document.getElementById("projectPriority").value;
+
+  const errEl = document.getElementById("modalError");
+
+  if (!name || !desc) {
+    errEl.textContent = "Please fill in all fields.";
+    errEl.style.display = "block";
+    return;
+  }
+
+  const res = await apiRequest("/api/projects", "POST", {
+    title: name,
+    description: desc,
+    priority
+  });
+
+  if (res._id) {
+    closeModal();
+    loadProjects();
+  } else {
+    errEl.textContent = res.message || "Failed to create project.";
+    errEl.style.display = "block";
+  }
+}
+
+
+async function deleteProject(id) {
+  if (!confirm("Delete this project?")) return;
+
+  await apiRequest(`/api/projects/${id}`, "DELETE");
+  loadProjects();
+}
+
+
+function openModal() {
+  document.getElementById("projectModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("projectModal").style.display = "none";
+  document.getElementById("modalError").style.display = "none";
+}
+
+// INIT
+loadProjects();
+</script>
+
+</body>
+</html>

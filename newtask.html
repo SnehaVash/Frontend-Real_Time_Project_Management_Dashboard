@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Task</title>
+<link rel="stylesheet" href="Realdashboard.css">
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo"><div class="logo-dot"></div>RTPM</div>
+    <div class="nav-label">Workspace</div>
+    <a href="RealDash.html" class="nav-item">Overview</a>
+    <a href="projects.html" class="nav-item">Projects</a>
+    <a href="sprint.html" class="nav-item">Sprint Board</a>
+    <a href="timeline.html" class="nav-item">Timeline</a>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="page-title">Create New Task</div>
+        <div class="breadcrumb">Add task to a project</div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">New Task</div>
+        </div>
+
+        <div style="padding:20px;display:flex;flex-direction:column;gap:14px">
+
+          <select id="taskProject" class="input">
+            <option value="" disabled selected>Select Project</option>
+          </select>
+
+          <input id="taskTitle" class="input" placeholder="Task title">
+
+          <textarea id="taskDesc" class="input" placeholder="Task description" 
+            style="height:100px"></textarea>
+
+          <select id="taskStatus" class="input">
+            <option value="pending">To Do</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Done</option>
+          </select>
+
+          <select id="taskPriority" class="input">
+            <option value="low">Low Priority</option>
+            <option value="medium" selected>Medium Priority</option>
+            <option value="high">High Priority</option>
+          </select>
+
+          <input id="taskDueDate" class="input" type="date" placeholder="Due Date">
+
+          <div id="taskError" style="color:#f87171;font-size:13px;display:none"></div>
+          <div id="taskSuccess" style="color:#4ade80;font-size:13px;display:none">
+            Task created successfully!
+          </div>
+
+          <button class="btn btn-primary" onclick="createTask()">Create Task</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const BASE_URL = "https://rtpm-dashboard.onrender.com";
+
+  if (sessionStorage.getItem("auth") !== "true") {
+    window.location.href = "login.html";
+  }
+
+  const token = sessionStorage.getItem("token");
+
+  async function loadProjects() {
+    try {
+      const res = await fetch(`${BASE_URL}/api/projects`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      const projects = await res.json();
+      const select = document.getElementById("taskProject");
+
+      projects.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p._id;
+        opt.textContent = p.title;
+        select.appendChild(opt);
+      });
+    } catch (err) {
+      console.error("Failed to load projects", err);
+    }
+  }
+
+  async function createTask() {
+    const projectId = document.getElementById("taskProject").value;
+    const title     = document.getElementById("taskTitle").value.trim();
+    const desc      = document.getElementById("taskDesc").value.trim();
+    const status    = document.getElementById("taskStatus").value;
+    const priority  = document.getElementById("taskPriority").value;
+    const dueDate   = document.getElementById("taskDueDate").value;
+    const errEl     = document.getElementById("taskError");
+    const successEl = document.getElementById("taskSuccess");
+
+    errEl.style.display     = "none";
+    successEl.style.display = "none";
+
+    if (!projectId || !title) {
+      errEl.textContent = "Project and title are required.";
+      errEl.style.display = "block";
+      return;
+    }
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/tasks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ title, description: desc, status, priority, projectId, dueDate })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        errEl.textContent = data.message || "Failed to create task.";
+        errEl.style.display = "block";
+        return;
+      }
+
+      successEl.style.display = "block";
+      setTimeout(() => window.location.href = "projects.html", 1500);
+
+    } catch (err) {
+      errEl.textContent = "Cannot connect to server.";
+      errEl.style.display = "block";
+    }
+  }
+
+  loadProjects();
+</script>
+</body>
+</html>

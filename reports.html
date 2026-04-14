@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports</title>
+
+<link rel="stylesheet" href="Realdashboard.css">
+</head>
+
+<body>
+
+<div class="shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+
+    <div class="logo">
+      <div class="logo-dot"></div>
+      RTPM
+    </div>
+
+    <div class="nav-label">Workspace</div>
+
+    <a href="RealDash.html" class="nav-item">Overview</a>
+    <a href="projects.html" class="nav-item">Projects</a>
+    <a href="sprint.html" class="nav-item">Sprint Board</a>
+    <a href="timeline.html" class="nav-item">Timeline</a>
+
+    <div class="nav-label">Manage</div>
+
+    <a href="team.html" class="nav-item">Team</a>
+    <a href="reports.html" class="nav-item active">Reports</a>
+    <a href="goals.html" class="nav-item">Goals</a>
+
+    <div class="nav-label">Tools</div>
+
+    <a href="docs.html" class="nav-item">Docs</a>
+    <a href="settings.html" class="nav-item">Settings</a>
+
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+
+    <header class="topbar">
+      <div>
+        <div class="page-title">Reports Dashboard</div>
+        <div class="breadcrumb">Analytics & Performance Overview</div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <div class="report-grid">
+
+        <div class="report-card">
+          <h3>Project Progress</h3>
+          <p>Overall completion</p>
+          <span>78%</span>
+        </div>
+
+        <div class="report-card">
+          <h3>Team Productivity</h3>
+          <p>Weekly performance</p>
+          <span>92%</span>
+        </div>
+
+        <div class="report-card">
+          <h3>Bugs Resolved</h3>
+          <p>This sprint</p>
+          <span>34</span>
+        </div>
+
+        <div class="report-card">
+          <h3>Pending Tasks</h3>
+          <p>Need attention</p>
+          <span>12</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+if(sessionStorage.getItem("auth") !== "true"){
+  window.location.href = "login.html";
+}
+</script>
+
+</body>
+</html>
