@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTPM Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Using Phosphor Icons for sleek outlines -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="state.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo"></div>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item active" data-tooltip="Dashboard">
+                    <i class="ph ph-squares-four"></i>
+                </a>
+                <a href="projects.html" class="nav-item" data-tooltip="Projects">
+                    <i class="ph ph-kanban"></i>
+                </a>
+
+                <a href="teams.html" class="nav-item" data-tooltip="Team">
+                    <i class="ph ph-users"></i>
+                </a>
+                <a href="settings.html" class="nav-item" data-tooltip="Settings">
+                    <i class="ph ph-gear"></i>
+                </a>
+            </nav>
+            <div class="user-profile" onclick="openProfileModal()" style="cursor: pointer;">
+                <img src="https://i.pravatar.cc/150?img=11" alt="User Avatar">
+            </div>
+        </aside>
+
+        <!-- Main Dashboard Content -->
+        <main class="dashboard-content">
+            <header class="topbar">
+                <div class="greeting">
+                    <h1 class="animate-fade-in-up">Overview</h1>
+                    <p class="subtitle animate-fade-in-up" style="animation-delay: 0.1s;">Thursday, October 24</p>
+                </div>
+                <div class="topbar-actions animate-fade-in-up" style="animation-delay: 0.2s;">
+                    <button class="action-btn blur-bg" data-tooltip="Search" onclick="openSearch()">
+                        <i class="ph ph-magnifying-glass"></i>
+                    </button>
+                    <div class="notification-wrapper" style="position: relative;">
+                        <button class="action-btn blur-bg" data-tooltip="Notifications" onclick="toggleNotifications()">
+                            <i class="ph ph-bell"></i>
+                            <span class="badge" id="notif-badge" style="display:none;"></span>
+                        </button>
+                        <!-- Dropdown inserted by JS -->
+                        <div id="notif-dropdown" class="notif-dropdown">
+                            <div class="notif-header">
+                                <h3>Notifications</h3>
+                                <button onclick="markRead()" class="text-accent" style="background:none; border:none; cursor:pointer;">Mark all read</button>
+                            </div>
+                            <div class="notif-list" id="notif-list"></div>
+                        </div>
+                    </div>
+                    <a href="new-project.html" class="btn-primary" data-tooltip="Create a new project" style="text-decoration: none;">
+                        <i class="ph ph-plus"></i>
+                        New Project
+                    </a>
+                </div>
+            </header>
+
+            <section class="metrics-grid">
+                <!-- Velocity Card -->
+                <div class="card metric-card glow-effect animate-fade-in-up" style="animation-delay: 0.3s;">
+                    <div class="card-header">
+                        <h3>Team Velocity</h3>
+                        <i class="ph ph-trend-up text-accent"></i>
+                    </div>
+                    <div class="metric-value">
+                        <span class="number count-up" data-target="124">0</span>
+                        <span class="unit">pts/sprint</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar accent-gradient" style="width: 82%"></div>
+                    </div>
+                    <span class="status-text">+14% vs last week</span>
+                </div>
+
+                <!-- Active Tasks -->
+                <div class="card metric-card animate-fade-in-up" style="animation-delay: 0.4s;">
+                    <div class="card-header">
+                        <h3>Active Tasks</h3>
+                        <i class="ph ph-check-circle text-success"></i>
+                    </div>
+                    <div class="metric-value">
+                        <span class="number count-up" data-target="48">0</span>
+                    </div>
+                    <div class="status-indicators">
+                        <div class="indicator"><span class="dot text-danger"></span> 4 blocked</div>
+                        <div class="indicator"><span class="dot text-warning"></span> 12 in review</div>
+                    </div>
+                </div>
+
+                <!-- Efficiency -->
+                <div class="card metric-card animate-fade-in-up" style="animation-delay: 0.5s;">
+                    <div class="card-header">
+                        <h3>Health Index</h3>
+                        <i class="ph ph-heartbeat text-secondary"></i>
+                    </div>
+                    <div class="metric-value">
+                        <span class="number count-up" data-target="96">0</span>
+                        <span class="unit">%</span>
+                    </div>
+                    <!-- Ring chart placeholder -->
+                    <div class="chart-ring">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+                            <circle class="ring-progress" cx="50" cy="50" r="45"></circle>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <section class="split-layout">
+                <!-- Activity Feed -->
+                <div class="card activity-feed-card animate-fade-in-up" style="animation-delay: 0.6s;">
+                    <div class="card-header">
+                        <h2>Live Activity</h2>
+                        <span class="pulse-indicator">Live</span>
+                    </div>
+                    <div class="activity-feed" id="activity-feed">
+                        <!-- Items injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Project Timeline -->
+                <div class="card timeline-card animate-fade-in-up" style="animation-delay: 0.7s;">
+                    <div class="card-header">
+                        <h2>Q4 Initiatives</h2>
+                        <a href="#" class="view-all">View Timeline</a>
+                    </div>
+                    <div class="timeline-list" id="timeline-list">
+                        <!-- Rendered via JS -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-container">
+            <i class="ph ph-magnifying-glass search-icon-large"></i>
+            <input type="text" id="search-input" placeholder="Search projects, teams, members..." autocomplete="off">
+            <button class="search-close" onclick="closeSearch()"><i class="ph ph-x"></i></button>
+            <div class="search-results" id="search-results"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

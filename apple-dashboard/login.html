@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTPM Dashboard | Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('login-bg.png') no-repeat center center fixed;
+            background-size: cover;
+            animation: none; /* override the global mesh for this crisp image */
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 32px 64px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .login-card .logo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 12px;
+            margin: 0 auto 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #fff;
+            box-shadow: 0 8px 16px rgba(41, 151, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card animate-fade-in-up">
+        <div class="logo">
+            <i class="ph ph-squares-four"></i>
+        </div>
+        <h2 style="font-size: 32px; font-weight: 700; margin-bottom: 8px; letter-spacing: -1px;">Welcome to</h2>
+        <h2 style="font-size: 32px; font-weight: 700; margin-bottom: 12px; letter-spacing: -1px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">RTPM Dashboard</h2>
+        <p style="color: var(--text-secondary); font-size: 15px; margin-bottom: 32px;">Sign in to your active workspace</p>
+
+        <form id="login-form">
+            <div class="form-group" style="text-align: left;">
+                <label>Email Address</label>
+                <input type="email" class="form-control" placeholder="admin@rtpm.com" required>
+            </div>
+            <div class="form-group" style="text-align: left; margin-bottom: 32px;">
+                <label>Password</label>
+                <input type="password" class="form-control" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;" id="submit-btn">
+                Access Dashboard
+                <i class="ph ph-arrow-right" style="margin-left: 8px;"></i>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Authenticating...';
+            btn.style.opacity = '0.7';
+            btn.style.pointerEvents = 'none';
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="ph ph-check-circle"></i> Success';
+                btn.style.background = 'var(--accent-green)';
+                btn.style.color = '#fff';
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 800);
+            }, 1200);
+        });
+    </script>
+</body>
+</html>

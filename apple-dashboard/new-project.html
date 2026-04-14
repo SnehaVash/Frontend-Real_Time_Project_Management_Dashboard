@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTPM Dashboard | New Project</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Using Phosphor Icons for sleek outlines -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="state.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo"></div>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item" data-tooltip="Dashboard">
+                    <i class="ph ph-squares-four"></i>
+                </a>
+                <a href="projects.html" class="nav-item active" data-tooltip="Projects">
+                    <i class="ph ph-kanban"></i>
+                </a>
+
+                <a href="teams.html" class="nav-item" data-tooltip="Team">
+                    <i class="ph ph-users"></i>
+                </a>
+                <a href="settings.html" class="nav-item" data-tooltip="Settings">
+                    <i class="ph ph-gear"></i>
+                </a>
+            </nav>
+            <div class="user-profile" onclick="openProfileModal()" style="cursor: pointer;">
+                <img src="https://i.pravatar.cc/150?img=11" alt="User Avatar">
+            </div>
+        </aside>
+
+        <!-- Main Dashboard Content -->
+        <main class="dashboard-content">
+            <header class="topbar">
+                <div class="greeting">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <a href="index.html" class="action-btn blur-bg" data-tooltip="Back to Dashboard" style="text-decoration: none;">
+                            <i class="ph ph-arrow-left"></i>
+                        </a>
+                        <h1 class="animate-fade-in-up">Create Project</h1>
+                    </div>
+                    <p class="subtitle animate-fade-in-up" style="animation-delay: 0.1s;">Define scope, deliverables, and team</p>
+                </div>
+            </header>
+
+            <section class="form-container animate-fade-in-up" style="animation-delay: 0.3s; max-width: 800px; margin: 0 auto;">
+                <div class="card form-card">
+                    <form id="new-project-form">
+                        
+                        <div class="form-group">
+                            <label for="projectName">Project Name</label>
+                            <input type="text" id="projectName" class="form-control" placeholder="e.g. Vision Pro App Integration" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="startDate">Start Date</label>
+                                <input type="date" id="startDate" class="form-control" required>
+                            </div>
+                            <div class="form-group half">
+                                <label for="endDate">Target Launch</label>
+                                <input type="date" id="endDate" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="projectDesc">Project Description</label>
+                            <textarea id="projectDesc" class="form-control" rows="4" placeholder="Describe the main objectives and key deliverables..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Assign to Team</label>
+                            <select id="projectTeam" class="form-control" required style="appearance: none; background: rgba(255,255,255,0.05); color: #fff;">
+                                <option value="">Select an active team...</option>
+                                <!-- Rendered dynamically -->
+                            </select>
+                        </div>
+
+                        <div class="form-actions">
+                            <a href="index.html" class="btn-secondary" style="text-decoration: none;">Cancel</a>
+                            <button type="submit" class="btn-primary">
+                                <i class="ph ph-check"></i>
+                                Launch Project
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const teamSelect = document.getElementById('projectTeam');
+            if(teamSelect) {
+                S.data.teams.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t.id;
+                    opt.innerText = t.name;
+                    teamSelect.appendChild(opt);
+                });
+            }
+        });
+
+        // Form submit animation
+        document.getElementById('new-project-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = document.querySelector('.form-actions .btn-primary');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Launching...';
+            btn.style.opacity = '0.7';
+            btn.style.pointerEvents = 'none';
+
+            // Gather data
+            const name = document.getElementById('projectName').value;
+            const sDate = document.getElementById('startDate').value;
+            const eDate = document.getElementById('endDate').value;
+            const teamId = document.getElementById('projectTeam').value;
+            
+            // Random color for new project
+            const colors = ['gradient-blue', 'gradient-purple', 'gradient-orange', 'gradient-green'];
+            const colorClass = colors[Math.floor(Math.random() * colors.length)];
+            
+            S.data.projects.push({
+                id: S.generateId(),
+                name,
+                progress: 0,
+                colorClass,
+                startDate: sDate,
+                endDate: eDate,
+                teamId: teamId
+            });
+            
+            S.addActivity('commit', 'ph-kanban', `Project <strong>${name}</strong> initialized`);
+            S.addNotification('New Project', `${name} has been set up successfully and is tracked.`);
+            S.save();
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="ph ph-check-circle"></i> Success';
+                btn.style.background = 'var(--accent-green)';
+                btn.style.color = '#fff';
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

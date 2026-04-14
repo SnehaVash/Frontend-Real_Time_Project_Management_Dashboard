@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTPM Dashboard | Settings</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="state.js"></script>
+    <style>
+        .settings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+        .setting-info h4 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .setting-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        /* iOS style toggle */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 30px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--gray-700);
+            transition: .4s;
+            border-radius: 30px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background-color: var(--accent-green);
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo"></div>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item" data-tooltip="Dashboard">
+                    <i class="ph ph-squares-four"></i>
+                </a>
+                <a href="projects.html" class="nav-item" data-tooltip="Projects">
+                    <i class="ph ph-kanban"></i>
+                </a>
+
+                <a href="teams.html" class="nav-item" data-tooltip="Team">
+                    <i class="ph ph-users"></i>
+                </a>
+                <a href="settings.html" class="nav-item active" data-tooltip="Settings">
+                    <i class="ph ph-gear"></i>
+                </a>
+            </nav>
+            <div class="user-profile" onclick="openProfileModal()" style="cursor: pointer;">
+                <img src="https://i.pravatar.cc/150?img=11" alt="User Avatar">
+            </div>
+        </aside>
+
+        <!-- Main Dashboard Content -->
+        <main class="dashboard-content">
+            <header class="topbar">
+                <div class="greeting">
+                    <h1 class="animate-fade-in-up">Settings</h1>
+                    <p class="subtitle animate-fade-in-up" style="animation-delay: 0.1s;">Preferences and account tools</p>
+                </div>
+            </header>
+
+            <section class="settings-section animate-fade-in-up" style="animation-delay: 0.3s; max-width: 800px; margin: 0 auto; width: 100%;">
+                
+                <h3 style="margin-bottom: 24px; color: var(--text-secondary); font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Preferences</h3>
+                
+                <div class="settings-list" style="margin-bottom: 48px;">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Push Notifications</h4>
+                            <p>Allow desktop alerts for new activities and mentions.</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggle-push" onchange="toggleSetting('pushNotifications')">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Dark Mode</h4>
+                            <p>Force deep dark mode theme, un-toggle for stark light mode.</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggle-dark" onchange="toggleSetting('darkMode')">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Apple Mesh Gradient</h4>
+                            <p>Enable the slow moving liquid background effect.</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggle-mesh" onchange="toggleSetting('meshGradient')">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 24px; color: var(--text-secondary); font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Account Danger Zone</h3>
+
+                <div class="card" style="border-color: rgba(255,69,58,0.3);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h4 style="color: var(--accent-danger); margin-bottom: 4px;">Factory Reset</h4>
+                            <p style="font-size: 13px; color: var(--text-secondary);">Clear all local database memory and reset to defaults.</p>
+                        </div>
+                        <button class="btn-primary" style="background: var(--accent-danger);" onclick="if(confirm('Are you absolutely sure?')) { localStorage.clear(); window.location.href='index.html'; }">
+                            Clear Data
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+    
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('toggle-push').checked = S.data.settings.pushNotifications;
+            document.getElementById('toggle-dark').checked = S.data.settings.darkMode;
+            document.getElementById('toggle-mesh').checked = S.data.settings.meshGradient;
+        });
+
+        function toggleSetting(key) {
+            S.data.settings[key] = !S.data.settings[key];
+            S.save();
+            S.enforceSettings();
+        }
+    </script>
+</body>
+</html>

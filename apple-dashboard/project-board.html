@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-store, must-revalidate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTPM Dashboard | Task Board</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="state.js"></script>
+    <style>
+        .board-container {
+            display: flex;
+            gap: 24px;
+            overflow-x: auto;
+            padding-bottom: 24px;
+            height: calc(100vh - 200px);
+            align-items: flex-start;
+        }
+        .board-column {
+            flex: 0 0 320px;
+            background: rgba(28, 28, 30, 0.4);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            max-height: 100%;
+        }
+        .board-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .board-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .task-list {
+            padding: 16px;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 50px;
+        }
+        .task-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .task-card h4 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .task-assignee img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .move-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .move-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+        }
+        .move-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .add-task-btn {
+            margin: 16px;
+            padding: 12px;
+            background: rgba(255,255,255,0.02);
+            border: 1px dashed rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            text-align: center;
+            transition: 0.2s;
+        }
+        .add-task-btn:hover {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            border-color: rgba(255,255,255,0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo"></div>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item" data-tooltip="Dashboard">
+                    <i class="ph ph-squares-four"></i>
+                </a>
+                <a href="projects.html" class="nav-item active" data-tooltip="Projects">
+                    <i class="ph ph-kanban"></i>
+                </a>
+                <a href="teams.html" class="nav-item" data-tooltip="Team">
+                    <i class="ph ph-users"></i>
+                </a>
+                <a href="settings.html" class="nav-item" data-tooltip="Settings">
+                    <i class="ph ph-gear"></i>
+                </a>
+            </nav>
+            <div class="user-profile" onclick="openProfileModal()" style="cursor: pointer;">
+                <img src="https://i.pravatar.cc/150?img=11" alt="User Avatar">
+            </div>
+        </aside>
+
+        <main class="dashboard-content">
+            <header class="topbar">
+                <div class="greeting">
+                    <a href="projects.html" style="color: var(--text-secondary); text-decoration: none; font-size: 13px; margin-bottom: 8px; display: inline-block;">
+                        <i class="ph ph-arrow-left"></i> Back to Projects
+                    </a>
+                    <h1 class="animate-fade-in-up" id="board-title">Project Board</h1>
+                </div>
+            </header>
+
+            <section class="animate-fade-in-up" style="animation-delay: 0.2s;">
+                <div class="board-container">
+                    
+                    <!-- COLUMN: TO DO -->
+                    <div class="board-column">
+                        <div class="board-header">
+                            <h3 style="color: var(--text-secondary);">To Do</h3>
+                            <span class="badge" id="count-todo">0</span>
+                        </div>
+                        <div class="task-list" id="col-todo"></div>
+                        <button class="add-task-btn" onclick="promptNewTask('todo')">
+                            <i class="ph ph-plus"></i> Add Task
+                        </button>
+                    </div>
+
+                    <!-- COLUMN: IN PROGRESS -->
+                    <div class="board-column">
+                        <div class="board-header">
+                            <h3 style="color: var(--accent-blue);">In Progress</h3>
+                            <span class="badge" id="count-in-progress" style="background: rgba(41,151,255,0.2); color: var(--accent-blue);">0</span>
+                        </div>
+                        <div class="task-list" id="col-in-progress"></div>
+                    </div>
+
+                    <!-- COLUMN: REVIEW -->
+                    <div class="board-column">
+                        <div class="board-header">
+                            <h3 style="color: var(--accent-orange);">Review</h3>
+                            <span class="badge" id="count-review" style="background: rgba(255,159,10,0.2); color: var(--accent-orange);">0</span>
+                        </div>
+                        <div class="task-list" id="col-review"></div>
+                    </div>
+
+                    <!-- COLUMN: DONE -->
+                    <div class="board-column">
+                        <div class="board-header">
+                            <h3 style="color: var(--accent-green);">Completed</h3>
+                            <span class="badge" id="count-done" style="background: rgba(48,209,88,0.2); color: var(--accent-green);">0</span>
+                        </div>
+                        <div class="task-list" id="col-done"></div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Quick Add Task Modal -->
+    <div class="side-panel-overlay" id="task-modal">
+        <div class="side-panel-content" style="max-width: 400px; right: auto; left: 50%; transform: translate(-50%, translateY(20px)) scale(0.95); transition: 0.3s; height: auto; top: 100px; border-radius: 20px;">
+            <div class="side-panel-header">
+                <h2>New Task</h2>
+                <button class="modal-close" onclick="closeTaskModal()" style="position:static;"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="side-panel-body">
+                <div class="form-group">
+                    <label>Task Title</label>
+                    <input type="text" id="new-task-title" class="form-control" placeholder="What needs to be done?">
+                </div>
+                <input type="hidden" id="new-task-status">
+                <button class="btn-primary" style="width:100%; justify-content:center; margin-top:16px;" onclick="saveTask()">Create Task</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="board.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
