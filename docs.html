@@ -11,8 +11,8 @@
 <body>
 
 <script>
-
-if (sessionStorage.getItem("auth") !== "true") {
+// ✅ Improved auth check (JWT-based, backend aligned)
+if (!sessionStorage.getItem("token")) {
   window.location.href = "login.html";
 }
 </script>
@@ -61,8 +61,7 @@ RTPM
 <div class="docs-icon">🚀</div>
 <h3>Getting Started</h3>
 <p>Setup dashboard and start managing projects.</p>
-<button onclick="toggleDoc('getting')">Read More</button>
-
+<button type="button" onclick="toggleDoc('getting')">Read More</button>
 <p class="doc-more" id="getting" style="display:none">
 Setup dashboard, create project, assign tasks and track progress.
 </p>
@@ -72,8 +71,7 @@ Setup dashboard, create project, assign tasks and track progress.
 <div class="docs-icon">📌</div>
 <h3>Create Tasks</h3>
 <p>Create tasks, assign team members and track progress.</p>
-<button onclick="toggleDoc('tasks')">Read More</button>
-
+<button type="button" onclick="toggleDoc('tasks')">Read More</button>
 <p class="doc-more" id="tasks" style="display:none">
 Create your first project, add tasks, assign team members and track progress.
 </p>
@@ -83,9 +81,7 @@ Create your first project, add tasks, assign team members and track progress.
 <div class="docs-icon">📊</div>
 <h3>Sprint Workflow</h3>
 <p>Track progress from todo to done.</p>
-
-<button onclick="toggleDoc('sprint')">Read More</button>
-
+<button type="button" onclick="toggleDoc('sprint')">Read More</button>
 <p class="doc-more" id="sprint" style="display:none">
 Move tasks from todo → in-progress → completed to track sprint properly.
 </p>
@@ -95,8 +91,7 @@ Move tasks from todo → in-progress → completed to track sprint properly.
 <div class="docs-icon">👥</div>
 <h3>Team Management</h3>
 <p>Manage team productivity and roles.</p>
-<button onclick="toggleDoc('team')">Read More</button>
-
+<button type="button" onclick="toggleDoc('team')">Read More</button>
 <p class="doc-more" id="team" style="display:none">
 Add team members, assign roles and manage productivity.
 </p>
@@ -106,8 +101,7 @@ Add team members, assign roles and manage productivity.
 <div class="docs-icon">📈</div>
 <h3>Reports</h3>
 <p>View analytics and performance metrics.</p>
-<button onclick="toggleDoc('reports')">Read More</button>
-
+<button type="button" onclick="toggleDoc('reports')">Read More</button>
 <p class="doc-more" id="reports" style="display:none">
 View analytics, progress charts and performance metrics.
 </p>
@@ -117,8 +111,7 @@ View analytics, progress charts and performance metrics.
 <div class="docs-icon">⚙</div>
 <h3>Settings</h3>
 <p>Customize dashboard preferences.</p>
-<button onclick="toggleDoc('settings')">Read More</button>
-
+<button type="button" onclick="toggleDoc('settings')">Read More</button>
 <p class="doc-more" id="settings" style="display:none">
 Customize dashboard preferences, profile and notifications.
 </p>
@@ -131,16 +124,11 @@ Customize dashboard preferences, profile and notifications.
 </div>
 
 <script>
-function toggleDoc(id){
+function toggleDoc(id) {
   const el = document.getElementById(id);
+  if (!el) return;
 
-  if(!el) return;
-
-  if(el.style.display === "block"){
-    el.style.display = "none";
-  } else {
-    el.style.display = "block";
-  }
+  el.style.display = (el.style.display === "block") ? "none" : "block";
 }
 </script>
 

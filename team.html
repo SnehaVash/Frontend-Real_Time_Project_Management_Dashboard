@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,61 +9,34 @@
 
 <body>
 
+<script>
+// ✅ AUTH CHECK
+if (!sessionStorage.getItem("token")) {
+  window.location.href = "login.html";
+}
+</script>
+
 <div class="shell">
 
-<!-- Sidebar -->
 <aside class="sidebar">
-
-<div class="logo">
-<div class="logo-dot"></div>
-RTPM
-</div>
+<div class="logo"><div class="logo-dot"></div>RTPM</div>
 
 <div class="nav-label">Workspace</div>
-
-<a href="RealDash.html" class="nav-item">
-<span class="nav-icon">◇</span> Overview
-</a>
-
-<a href="projects.html" class="nav-item">
-<span class="nav-icon">◈</span> Projects
-</a>
-
-<a href="sprint.html" class="nav-item">
-<span class="nav-icon">◻</span> Sprint Board
-</a>
-
-<a href="timeline.html" class="nav-item">
-<span class="nav-icon">◷</span> Timeline
-</a>
+<a href="RealDash.html" class="nav-item">Overview</a>
+<a href="projects.html" class="nav-item">Projects</a>
+<a href="sprint.html" class="nav-item">Sprint Board</a>
+<a href="timeline.html" class="nav-item">Timeline</a>
 
 <div class="nav-label">Manage</div>
-
-<a href="team.html" class="nav-item active">
-<span class="nav-icon">◌</span> Team
-</a>
-
-<a href="reports.html" class="nav-item">
-<span class="nav-icon">◌</span> Reports
-</a>
-
-<a href="goals.html" class="nav-item">
-<span class="nav-icon">◎</span> Goals
-</a>
+<a href="team.html" class="nav-item active">Team</a>
+<a href="reports.html" class="nav-item">Reports</a>
+<a href="goals.html" class="nav-item">Goals</a>
 
 <div class="nav-label">Tools</div>
-
-<a href="docs.html" class="nav-item">
-<span class="nav-icon">◆</span> Docs
-</a>
-
-<a href="settings.html" class="nav-item">
-<span class="nav-icon">⚙</span> Settings
-</a>
-
+<a href="docs.html" class="nav-item">Docs</a>
+<a href="settings.html" class="nav-item">Settings</a>
 </aside>
 
-<!-- Main -->
 <main class="main">
 
 <div class="team-header">
@@ -72,69 +44,9 @@ RTPM
 <button class="add-member" onclick="openMemberModal()">+ Add Member</button>
 </div>
 
-<div class="team-grid" id="teamGrid">
-
-<!-- MEMBER 1 -->
-<div class="team-card">
-
-<button class="delete-member" onclick="deleteMember(this)">
-<svg viewBox="0 0 24 24" width="14" height="14" fill="none">
-<path d="M3 6h18" stroke="currentColor" stroke-width="2"/>
-<path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2"/>
-<path d="M6 6l1 14h10l1-14" stroke="currentColor" stroke-width="2"/>
-<path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2"/>
-</svg>
-</button>
-
-<div class="avatar">PR</div>
-<h3>Priya Sharma</h3>
-<p>Frontend Developer</p>
-<span class="status online">Online</span>
-
-</div>
-
-<!-- MEMBER 2 -->
-<div class="team-card">
-
-<button class="delete-member" onclick="deleteMember(this)">
-<svg viewBox="0 0 24 24" width="14" height="14" fill="none">
-<path d="M3 6h18" stroke="currentColor" stroke-width="2"/>
-<path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2"/>
-<path d="M6 6l1 14h10l1-14" stroke="currentColor" stroke-width="2"/>
-<path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2"/>
-</svg>
-</button>
-
-<div class="avatar">RH</div>
-<h3>Rohan Kumar</h3>
-<p>Backend Developer</p>
-<span class="status offline">Offline</span>
-
-</div>
-
-<!-- MEMBER 3 -->
-<div class="team-card">
-
-<button class="delete-member" onclick="deleteMember(this)">
-<svg viewBox="0 0 24 24" width="14" height="14" fill="none">
-<path d="M3 6h18" stroke="currentColor" stroke-width="2"/>
-<path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2"/>
-<path d="M6 6l1 14h10l1-14" stroke="currentColor" stroke-width="2"/>
-<path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2"/>
-</svg>
-</button>
-
-<div class="avatar">MV</div>
-<h3>Meera Verma</h3>
-<p>UI/UX Designer</p>
-<span class="status online">Online</span>
-
-</div>
-
-</div>
+<div class="team-grid" id="teamGrid"></div>
 
 </main>
-
 </div>
 
 <!-- MODAL -->
@@ -146,12 +58,6 @@ RTPM
 <input type="text" id="memberName" placeholder="Member Name">
 <input type="text" id="memberRole" placeholder="Role">
 
-<select id="memberStatus">
-<option value="online">Online</option>
-<option value="offline">Offline</option>
-<option value="busy">Busy</option>
-</select>
-
 <div class="modal-buttons">
 <button onclick="addMember()">Add Member</button>
 <button onclick="closeMemberModal()">Cancel</button>
@@ -160,56 +66,83 @@ RTPM
 </div>
 </div>
 
+<script src="api.js"></script>
+
 <script>
+// MODAL
 function openMemberModal() {
-document.getElementById("memberModal").style.display = "flex";
+  document.getElementById("memberModal").style.display = "flex";
 }
 
 function closeMemberModal() {
-document.getElementById("memberModal").style.display = "none";
+  document.getElementById("memberModal").style.display = "none";
 }
 
-function addMember() {
+// LOAD USERS
+async function loadTeam() {
+  try {
+    const res = await apiRequest("/api/users"); // adjust if needed
+    const users = res.data || res;
 
-const name = document.getElementById("memberName").value.trim();
-const role = document.getElementById("memberRole").value.trim();
-const status = document.getElementById("memberStatus").value;
+    const container = document.getElementById("teamGrid");
+    container.innerHTML = "";
 
-if (!name || !role) return;
+    users.forEach(u => {
+      const initials = (u.name || "U")
+        .split(" ")
+        .map(n => n[0])
+        .join("")
+        .toUpperCase();
 
-const initials = name.split(" ").map(n => n[0]).join("").toUpperCase();
+      const card = `
+      <div class="team-card">
 
-const card = `
-<div class="team-card">
+      <button class="delete-member" onclick="deleteMember('${u._id}')">🗑</button>
 
-<button class="delete-member" onclick="deleteMember(this)">
-<svg viewBox="0 0 24 24" width="14" height="14" fill="none">
-<path d="M3 6h18" stroke="currentColor" stroke-width="2"/>
-<path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2"/>
-<path d="M6 6l1 14h10l1-14" stroke="currentColor" stroke-width="2"/>
-<path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2"/>
-</svg>
-</button>
+      <div class="avatar">${initials}</div>
+      <h3>${u.name}</h3>
+      <p>${u.role || "Member"}</p>
+      <span class="status online">Active</span>
 
-<div class="avatar">${initials}</div>
-<h3>${name}</h3>
-<p>${role}</p>
-<span class="status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+      </div>
+      `;
 
-</div>
-`;
+      container.insertAdjacentHTML("beforeend", card);
+    });
 
-document.getElementById("teamGrid").insertAdjacentHTML("beforeend", card);
-
-closeMemberModal();
-
-document.getElementById("memberName").value = "";
-document.getElementById("memberRole").value = "";
+  } catch (err) {
+    console.error("Failed to load team:", err);
+  }
 }
 
-function deleteMember(btn) {
-btn.closest(".team-card").remove();
+// ADD MEMBER (optional backend support needed)
+async function addMember() {
+  const name = document.getElementById("memberName").value.trim();
+  const role = document.getElementById("memberRole").value.trim();
+
+  if (!name || !role) return;
+
+  const res = await apiRequest("/api/users", "POST", {
+    name,
+    role
+  });
+
+  if (res._id) {
+    closeMemberModal();
+    loadTeam();
+  }
 }
+
+// DELETE MEMBER
+async function deleteMember(id) {
+  if (!confirm("Delete member?")) return;
+
+  await apiRequest(`/api/users/${id}`, "DELETE");
+  loadTeam();
+}
+
+// INIT
+document.addEventListener("DOMContentLoaded", loadTeam);
 </script>
 
 </body>

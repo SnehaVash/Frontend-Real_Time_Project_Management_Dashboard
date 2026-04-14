@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
+/* SAME CSS (unchanged) */
 *{
 margin:0;
 padding:0;
@@ -121,6 +122,13 @@ animation:shake .3s;
 
 <body>
 
+<script>
+// ✅ Auto redirect if already logged in
+if (sessionStorage.getItem("token")) {
+  window.location.href = "RealDash.html";
+}
+</script>
+
 <div class="card" id="card">
 
 <div class="title">User Login</div>
@@ -175,20 +183,23 @@ async function login() {
             body: JSON.stringify({ email, password: pass })
         });
 
-        const data = await res.json();
+        let data = null;
+        try {
+            data = await res.json();
+        } catch {
+            data = null;
+        }
 
         if (!res.ok) {
-            showError(data.message || "Invalid credentials");
+            showError(data?.message || "Invalid credentials");
             shake(card);
             return;
         }
 
-       
-        sessionStorage.setItem("auth", "true");
+        // ✅ Store ONLY what is needed
         sessionStorage.setItem("token", data.token);
         sessionStorage.setItem("user", JSON.stringify(data.user));
 
-      
         if (data.user?.name) {
             localStorage.setItem("userName", data.user.name);
         }

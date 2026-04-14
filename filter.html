@@ -11,8 +11,12 @@
 <body>
 
 <script>
+// AUTH CHECK (aligned with api.js)
+const token = sessionStorage.getItem("token");
 
-if (sessionStorage.getItem("auth") !== "true") {
+if (!token) {
+  sessionStorage.removeItem("auth");
+  sessionStorage.removeItem("user");
   window.location.href = "login.html";
 }
 </script>
@@ -57,38 +61,22 @@ RTPM
 <div class="filter-grid">
 
 <!-- Status -->
-<div class="filter-card">
+<div class="filter-card" id="statusFilter">
 <div class="filter-title">Status</div>
 
-<label class="check">
-<input type="checkbox" value="todo"> To Do
-</label>
-
-<label class="check">
-<input type="checkbox" value="in-progress"> In Progress
-</label>
-
-<label class="check">
-<input type="checkbox" value="done"> Done
-</label>
+<label class="check"><input type="checkbox" value="todo"> To Do</label>
+<label class="check"><input type="checkbox" value="in-progress"> In Progress</label>
+<label class="check"><input type="checkbox" value="done"> Done</label>
 
 </div>
 
 <!-- Priority -->
-<div class="filter-card">
+<div class="filter-card" id="priorityFilter">
 <div class="filter-title">Priority</div>
 
-<label class="check">
-<input type="checkbox" value="high"> High
-</label>
-
-<label class="check">
-<input type="checkbox" value="medium"> Medium
-</label>
-
-<label class="check">
-<input type="checkbox" value="low"> Low
-</label>
+<label class="check"><input type="checkbox" value="high"> High</label>
+<label class="check"><input type="checkbox" value="medium"> Medium</label>
+<label class="check"><input type="checkbox" value="low"> Low</label>
 
 </div>
 
@@ -124,26 +112,21 @@ RTPM
 
 </div>
 
-<script>
+<!-- API FIRST (safe load order fix) -->
+<script src="api.js"></script>
 
-function getCheckedValues(name) {
+<script>
+function getCheckedValues(containerId) {
   const values = [];
-  document.querySelectorAll(`input[type="checkbox"]`).forEach(cb => {
-    if (cb.checked) values.push(cb.value);
+  document.querySelectorAll(`#${containerId} input:checked`).forEach(cb => {
+    values.push(cb.value);
   });
   return values;
 }
 
-
-function applyFilters() {
-  const status = [];
-  const priority = [];
-
-  document.querySelectorAll(".filter-card:nth-child(1) input:checked")
-    .forEach(cb => status.push(cb.value));
-
-  document.querySelectorAll(".filter-card:nth-child(2) input:checked")
-    .forEach(cb => priority.push(cb.value));
+async function applyFilters() {
+  const status = getCheckedValues("statusFilter");
+  const priority = getCheckedValues("priorityFilter");
 
   const team = document.getElementById("teamFilter").value;
   const from = document.getElementById("fromDate").value;
@@ -157,11 +140,21 @@ function applyFilters() {
     to
   };
 
-  console.log("Applied Filters:", filters);
+  console.log("Sending filters to backend:", filters);
 
-  alert("Filters applied (frontend ready). Backend integration next step.");
+  try {
+    const res = await apiRequest("/tasks/filter", "POST", filters);
+
+    console.log("Filtered results:", res);
+
+    alert("Filters applied successfully!");
+
+    // TODO: render results in UI
+
+  } catch (err) {
+    console.error("Filter error:", err);
+  }
 }
-
 
 function resetFilters() {
   document.querySelectorAll("input[type=checkbox]").forEach(cb => cb.checked = false);
@@ -170,11 +163,8 @@ function resetFilters() {
   document.getElementById("toDate").value = "";
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(sessionStorage.getItem("user"));
-
-  // later we can use this to populate team dynamically
   console.log("Logged in user:", user);
 });
 </script>

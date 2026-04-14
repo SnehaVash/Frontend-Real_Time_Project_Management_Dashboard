@@ -1,4 +1,3 @@
-
 const BASE_URL = "http://localhost:5000/api";
 
 function getToken() {
@@ -11,16 +10,14 @@ function renderActivityFeed(activities = []) {
 
   feed.innerHTML = "";
 
-  if (!activities.length) return;
-
   activities.forEach((a, i) => {
     const div = document.createElement("div");
     div.className = "activity-item";
     div.style.animationDelay = (i * 0.05) + "s";
 
     div.innerHTML = `
-      <div class="act-avatar" style="background:${a.color}">
-        ${a.user}
+      <div class="act-avatar" style="background:${a.color || "#7c5cfc"}">
+        ${a.user || "U"}
       </div>
       <div class="act-content">
         <div class="act-text">
@@ -44,8 +41,6 @@ function renderSprintChart(sprints = []) {
   chart.innerHTML = "";
   labels.innerHTML = "";
 
-  if (!sprints.length) return;
-
   const max = 100;
 
   sprints.forEach(s => {
@@ -65,13 +60,6 @@ function renderSprintChart(sprints = []) {
 
     labels.appendChild(label);
   });
-}
-
-function increaseStat(id, value) {
-  const el = document.getElementById(id);
-  if (!el) return;
-
-  el.textContent = value;
 }
 
 function updateCircle(percent = 0) {
@@ -134,16 +122,6 @@ function initProfileModal() {
   }
 }
 
-function openProjectModal() {
-  const modal = document.getElementById("projectModal");
-  if (modal) modal.style.display = "flex";
-}
-
-function closeProjectModal() {
-  const modal = document.getElementById("projectModal");
-  if (modal) modal.style.display = "none";
-}
-
 async function loadDashboardData() {
   try {
     const token = getToken();
@@ -158,8 +136,21 @@ async function loadDashboardData() {
     if (!res.ok) return;
 
     const data = await res.json();
-
     console.log("Dashboard data:", data);
+
+    // ✅ NOW CONNECT BACKEND DATA TO UI
+
+    if (data.activities) {
+      renderActivityFeed(data.activities);
+    }
+
+    if (data.sprints) {
+      renderSprintChart(data.sprints);
+    }
+
+    if (data.progress !== undefined) {
+      updateCircle(data.progress);
+    }
 
   } catch (err) {
     console.log("Dashboard error:", err);
@@ -170,21 +161,10 @@ document.addEventListener("DOMContentLoaded", () => {
   initDarkMode();
   initProfileModal();
 
-
-  renderActivityFeed([
-    { user: "PR", name: "Priya", action: "merged", item: "PR #284", time: "Just now", color: "#7c5cfc" },
-    { user: "RH", name: "Rohan", action: "moved", item: "API Gateway", time: "2 min ago", color: "#fc5c7d" },
-    { user: "ZR", name: "Zara", action: "completed", item: "UI fix", time: "8 min ago", color: "#fcb95c" }
-  ]);
-
-  renderSprintChart([
-    { label: "S8", done: 62, added: 15 },
-    { label: "S9", done: 75, added: 20 },
-    { label: "S10", done: 58, added: 10 }
-  ]);
-
-  updateCircle(72);
-
+  // fallback UI only if backend fails
+  renderActivityFeed([]);
+  renderSprintChart([]);
+  updateCircle(0);
 
   loadDashboardData();
 });

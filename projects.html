@@ -9,6 +9,13 @@
 
 <body>
 
+<script>
+// ✅ FIXED AUTH
+if (!sessionStorage.getItem("token")) {
+  window.location.href = "login.html";
+}
+</script>
+
 <div class="shell">
   <aside class="sidebar">
     <div class="logo"><div class="logo-dot"></div>RTPM</div>
@@ -42,21 +49,10 @@ justify-content:center;align-items:center;z-index:999;">
   <div style="background:#1e293b;padding:30px;border-radius:16px;width:400px;color:white">
     <h2 style="margin-bottom:20px">Create Project</h2>
 
-    <input id="projectName" placeholder="Project Name"
-      style="width:100%;padding:12px;border-radius:8px;
-      border:1px solid rgba(255,255,255,0.1);
-      background:rgba(255,255,255,0.08);color:white;margin-bottom:12px">
+    <input id="projectName" placeholder="Project Name" class="input">
+    <textarea id="projectDesc" placeholder="Description" class="input" style="height:100px"></textarea>
 
-    <textarea id="projectDesc" placeholder="Description"
-      style="width:100%;padding:12px;border-radius:8px;
-      border:1px solid rgba(255,255,255,0.1);
-      background:rgba(255,255,255,0.08);color:white;height:100px;margin-bottom:12px"></textarea>
-
-    <select id="projectPriority"
-      style="width:100%;padding:12px;border-radius:8px;
-      border:1px solid rgba(255,255,255,0.1);
-      background:#1e293b;color:white;margin-bottom:20px">
-
+    <select id="projectPriority" class="input">
       <option value="low">Low Priority</option>
       <option value="medium" selected>Medium Priority</option>
       <option value="high">High Priority</option>
@@ -71,24 +67,18 @@ justify-content:center;align-items:center;z-index:999;">
   </div>
 </div>
 
-<!-- IMPORTANT: API FILE -->
 <script src="api.js"></script>
 
 <script>
-const BASE_URL = "https://rtpm-dashboard.onrender.com";
-
-// Auth check
-if (sessionStorage.getItem("auth") !== "true") {
-  window.location.href = "login.html";
-}
-
-// LOAD PROJECTS (UPDATED)
+// LOAD PROJECTS
 async function loadProjects() {
   try {
     const data = await apiRequest("/api/projects");
 
+    const list = data.data || data;
+
     document.getElementById("loadingMsg").style.display = "none";
-    renderProjects(data);
+    renderProjects(list);
 
   } catch (err) {
     document.getElementById("loadingMsg").textContent =
@@ -118,7 +108,7 @@ function renderProjects(projects) {
       <p>${p.description || ""}</p>
 
       <div style="display:flex;gap:10px;margin-top:8px">
-        <span style="color:#8b5cf6;font-size:12px">● ${p.status}</span>
+        <span style="color:#8b5cf6;font-size:12px">● ${p.status || "active"}</span>
         <span style="color:#aaa;font-size:12px">Priority: ${p.priority}</span>
       </div>
     `;
@@ -127,7 +117,7 @@ function renderProjects(projects) {
   });
 }
 
-// CREATE PROJECT (UPDATED)
+// CREATE PROJECT
 async function createProject() {
   const name = document.getElementById("projectName").value.trim();
   const desc = document.getElementById("projectDesc").value.trim();
@@ -147,23 +137,28 @@ async function createProject() {
     priority
   });
 
-  if (res._id) {
+  if (res?._id || res?.data?._id) {
     closeModal();
     loadProjects();
   } else {
-    errEl.textContent = res.message || "Failed to create project.";
+    errEl.textContent = res?.message || "Failed to create project.";
     errEl.style.display = "block";
   }
 }
 
-
+// DELETE
 async function deleteProject(id) {
   if (!confirm("Delete this project?")) return;
 
-  await apiRequest(`/api/projects/${id}`, "DELETE");
+  const res = await apiRequest(`/api/projects/${id}`, "DELETE");
+
+  if (res?.success === false) {
+    alert("Failed to delete project");
+    return;
+  }
+
   loadProjects();
 }
-
 
 function openModal() {
   document.getElementById("projectModal").style.display = "flex";
@@ -175,7 +170,7 @@ function closeModal() {
 }
 
 // INIT
-loadProjects();
+document.addEventListener("DOMContentLoaded", loadProjects);
 </script>
 
 </body>

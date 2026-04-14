@@ -10,6 +10,13 @@
 
 <body>
 
+<script>
+  // AUTH CHECK (IMPORTANT)
+  if (sessionStorage.getItem("auth") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
+
 <div class="shell">
 
 <!-- Sidebar -->

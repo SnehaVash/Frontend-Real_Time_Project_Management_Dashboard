@@ -8,6 +8,13 @@
 </head>
 <body>
 
+<script>
+// ✅ FIXED AUTH (token based)
+if (!sessionStorage.getItem("token")) {
+  window.location.href = "login.html";
+}
+</script>
+
 <div class="shell">
   <aside class="sidebar">
     <div class="logo"><div class="logo-dot"></div>RTPM</div>
@@ -43,10 +50,11 @@
           <textarea id="taskDesc" class="input" placeholder="Task description" 
             style="height:100px"></textarea>
 
+          <!-- ✅ FIXED STATUS VALUES -->
           <select id="taskStatus" class="input">
-            <option value="pending">To Do</option>
+            <option value="todo">To Do</option>
             <option value="in-progress">In Progress</option>
-            <option value="completed">Done</option>
+            <option value="done">Done</option>
           </select>
 
           <select id="taskPriority" class="input">
@@ -55,95 +63,97 @@
             <option value="high">High Priority</option>
           </select>
 
-          <input id="taskDueDate" class="input" type="date" placeholder="Due Date">
+          <input id="taskDueDate" class="input" type="date">
 
           <div id="taskError" style="color:#f87171;font-size:13px;display:none"></div>
           <div id="taskSuccess" style="color:#4ade80;font-size:13px;display:none">
             Task created successfully!
           </div>
 
-          <button class="btn btn-primary" onclick="createTask()">Create Task</button>
+          <button class="btn btn-primary" id="createBtn" onclick="createTask()">Create Task</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ✅ USE api.js -->
+<script src="api.js"></script>
+
 <script>
-  const BASE_URL = "https://rtpm-dashboard.onrender.com";
+async function loadProjects() {
+  try {
+    const res = await apiRequest("/api/projects", "GET");
 
-  if (sessionStorage.getItem("auth") !== "true") {
-    window.location.href = "login.html";
+    const list = res.data || res;
+    const select = document.getElementById("taskProject");
+
+    list.forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p._id;
+      opt.textContent = p.title || p.name;
+      select.appendChild(opt);
+    });
+
+  } catch (err) {
+    console.error("Failed to load projects", err);
+  }
+}
+
+async function createTask() {
+  const projectId = document.getElementById("taskProject").value;
+  const title     = document.getElementById("taskTitle").value.trim();
+  const desc      = document.getElementById("taskDesc").value.trim();
+  const status    = document.getElementById("taskStatus").value;
+  const priority  = document.getElementById("taskPriority").value;
+  const dueDate   = document.getElementById("taskDueDate").value;
+
+  const errEl     = document.getElementById("taskError");
+  const successEl = document.getElementById("taskSuccess");
+  const btn       = document.getElementById("createBtn");
+
+  errEl.style.display = "none";
+  successEl.style.display = "none";
+
+  if (!projectId || !title) {
+    errEl.textContent = "Project and title are required.";
+    errEl.style.display = "block";
+    return;
   }
 
-  const token = sessionStorage.getItem("token");
+  btn.disabled = true;
+  btn.textContent = "Creating...";
 
-  async function loadProjects() {
-    try {
-      const res = await fetch(`${BASE_URL}/api/projects`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      const projects = await res.json();
-      const select = document.getElementById("taskProject");
+  try {
+    const res = await apiRequest("/api/tasks", "POST", {
+      title,
+      description: desc,
+      status,
+      priority,
+      projectId,
+      dueDate
+    });
 
-      projects.forEach(p => {
-        const opt = document.createElement("option");
-        opt.value = p._id;
-        opt.textContent = p.title;
-        select.appendChild(opt);
-      });
-    } catch (err) {
-      console.error("Failed to load projects", err);
-    }
-  }
-
-  async function createTask() {
-    const projectId = document.getElementById("taskProject").value;
-    const title     = document.getElementById("taskTitle").value.trim();
-    const desc      = document.getElementById("taskDesc").value.trim();
-    const status    = document.getElementById("taskStatus").value;
-    const priority  = document.getElementById("taskPriority").value;
-    const dueDate   = document.getElementById("taskDueDate").value;
-    const errEl     = document.getElementById("taskError");
-    const successEl = document.getElementById("taskSuccess");
-
-    errEl.style.display     = "none";
-    successEl.style.display = "none";
-
-    if (!projectId || !title) {
-      errEl.textContent = "Project and title are required.";
+    if (!res || res.success === false) {
+      errEl.textContent = res?.message || "Failed to create task.";
       errEl.style.display = "block";
       return;
     }
 
-    try {
-      const res = await fetch(`${BASE_URL}/api/tasks`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ title, description: desc, status, priority, projectId, dueDate })
-      });
+    successEl.style.display = "block";
+    setTimeout(() => window.location.href = "projects.html", 1500);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        errEl.textContent = data.message || "Failed to create task.";
-        errEl.style.display = "block";
-        return;
-      }
-
-      successEl.style.display = "block";
-      setTimeout(() => window.location.href = "projects.html", 1500);
-
-    } catch (err) {
-      errEl.textContent = "Cannot connect to server.";
-      errEl.style.display = "block";
-    }
+  } catch (err) {
+    errEl.textContent = "Cannot connect to server.";
+    errEl.style.display = "block";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Create Task";
   }
+}
 
-  loadProjects();
+document.addEventListener("DOMContentLoaded", loadProjects);
 </script>
+
 </body>
 </html>

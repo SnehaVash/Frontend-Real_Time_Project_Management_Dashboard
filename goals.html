@@ -10,115 +10,108 @@
 
 <body>
 
-<div class="shell">
-
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="logo">
-      <div class="logo-dot"></div>
-      RTPM
-    </div>
-
-    <div class="nav-label">Workspace</div>
-    <a href="RealDash.html" class="nav-item">Overview</a>
-    <a href="projects.html" class="nav-item">Projects</a>
-    <a href="sprint.html" class="nav-item">Sprint Board</a>
-    <a href="timeline.html" class="nav-item">Timeline</a>
-
-    <div class="nav-label">Manage</div>
-    <a href="team.html" class="nav-item">Team</a>
-    <a href="reports.html" class="nav-item">Reports</a>
-    <a href="goals.html" class="nav-item active">Goals</a>
-
-    <div class="nav-label">Tools</div>
-    <a href="docs.html" class="nav-item">Docs</a>
-    <a href="settings.html" class="nav-item">Settings</a>
-  </aside>
-
-  <!-- Main -->
-  <div class="main">
-
-    <header class="topbar">
-      <div>
-        <div class="page-title">Goals</div>
-        <div class="breadcrumb">Track project progress</div>
-      </div>
-    </header>
-
-    <div class="content">
-
-      <div class="goals-wrapper">
-
-        <!-- Project 1 -->
-        <div class="project-goals">
-          <h2 class="project-title">Project Alpha</h2>
-
-          <div class="goals-grid">
-
-            <div class="goal-card">
-              <h3>UI Completion</h3>
-              <div class="progress-bar">
-                <div class="progress" style="width:70%"></div>
-              </div>
-              <span>70%</span>
-            </div>
-
-            <div class="goal-card">
-              <h3>API Integration</h3>
-              <div class="progress-bar">
-                <div class="progress" style="width:45%"></div>
-              </div>
-              <span>45%</span>
-            </div>
-
-            <div class="goal-card">
-              <h3>Testing</h3>
-              <div class="progress-bar">
-                <div class="progress" style="width:30%"></div>
-              </div>
-              <span>30%</span>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Project 2 -->
-        <div class="project-goals">
-          <h2 class="project-title">Project Beta</h2>
-
-          <div class="goals-grid">
-
-            <div class="goal-card">
-              <h3>Dashboard</h3>
-              <div class="progress-bar">
-                <div class="progress" style="width:85%"></div>
-              </div>
-              <span>85%</span>
-            </div>
-
-            <div class="goal-card">
-              <h3>Bug Fixing</h3>
-              <div class="progress-bar">
-                <div class="progress" style="width:60%"></div>
-              </div>
-              <span>60%</span>
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
 <script>
-if(sessionStorage.getItem("auth") !== "true"){
+// AUTH CHECK (aligned with api.js)
+const token = sessionStorage.getItem("token");
+
+if (!token) {
+  sessionStorage.removeItem("auth");
+  sessionStorage.removeItem("user");
   window.location.href = "login.html";
 }
+</script>
+
+<div class="shell">
+
+<!-- Sidebar -->
+<aside class="sidebar">
+<div class="logo">
+<div class="logo-dot"></div>
+RTPM
+</div>
+
+<div class="nav-label">Workspace</div>
+<a href="RealDash.html" class="nav-item">Overview</a>
+<a href="projects.html" class="nav-item">Projects</a>
+<a href="sprint.html" class="nav-item">Sprint Board</a>
+<a href="timeline.html" class="nav-item">Timeline</a>
+
+<div class="nav-label">Manage</div>
+<a href="team.html" class="nav-item">Team</a>
+<a href="reports.html" class="nav-item">Reports</a>
+<a href="goals.html" class="nav-item active">Goals</a>
+
+<div class="nav-label">Tools</div>
+<a href="docs.html" class="nav-item">Docs</a>
+<a href="settings.html" class="nav-item">Settings</a>
+</aside>
+
+<!-- Main -->
+<div class="main">
+
+<header class="topbar">
+<div>
+<div class="page-title">Goals</div>
+<div class="breadcrumb">Track project progress</div>
+</div>
+</header>
+
+<div class="content">
+
+<div id="goalsContainer" class="goals-wrapper">
+<p>Loading goals...</p>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<script src="api.js"></script>
+
+<script>
+async function loadGoals() {
+  const container = document.getElementById("goalsContainer");
+
+  try {
+    const res = await apiRequest("/goals", "GET");
+
+    if (!res || !res.data || res.data.length === 0) {
+      container.innerHTML = "<p>No goals found</p>";
+      return;
+    }
+
+    container.innerHTML = res.data.map(project => `
+      <div class="project-goals">
+        <h2 class="project-title">${project.name || "Untitled Project"}</h2>
+
+        <div class="goals-grid">
+          ${(project.goals || []).map(goal => {
+            const progress = Math.min(100, goal.progress || 0);
+
+            return `
+              <div class="goal-card">
+                <h3>${goal.title || "No Title"}</h3>
+
+                <div class="progress-bar">
+                  <div class="progress" style="width:${progress}%"></div>
+                </div>
+
+                <span>${progress}%</span>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </div>
+    `).join("");
+
+  } catch (err) {
+    console.error("Error loading goals:", err);
+    container.innerHTML = "<p>Failed to load goals</p>";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadGoals);
 </script>
 
 </body>

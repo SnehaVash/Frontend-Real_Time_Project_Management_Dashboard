@@ -1,18 +1,34 @@
-
 (function () {
-  const token = sessionStorage.getItem("token");
-  const auth = sessionStorage.getItem("auth");
+
+  function getToken() {
+    return sessionStorage.getItem("token");
+  }
 
   function isAuthenticated() {
+    const token = getToken();
+    const auth = sessionStorage.getItem("auth");
+
     return token && auth === "true";
   }
 
-  function redirectToLogin() {
+  function logoutRedirect() {
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("auth");
+    sessionStorage.removeItem("user");
+
     window.location.href = "login.html";
   }
 
-  // run guard immediately
-  if (!isAuthenticated()) {
-    redirectToLogin();
+  function guard() {
+    if (!isAuthenticated()) {
+      logoutRedirect();
+    }
   }
+
+  // Run immediately
+  guard();
+
+  // Optional safety: re-check on back/forward navigation
+  window.addEventListener("pageshow", guard);
+
 })();

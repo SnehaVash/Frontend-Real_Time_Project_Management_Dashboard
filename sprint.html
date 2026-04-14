@@ -9,67 +9,40 @@
 
 <body>
 
+<script>
+// ✅ AUTH CHECK
+if (!sessionStorage.getItem("token")) {
+  window.location.href = "login.html";
+}
+</script>
+
 <div class="shell">
 
-<!-- Sidebar -->
 <aside class="sidebar">
-
-<div class="logo">
-<div class="logo-dot"></div>
-RTPM
-</div>
+<div class="logo"><div class="logo-dot"></div>RTPM</div>
 
 <div class="nav-label">Workspace</div>
-
-<a href="RealDash.html" class="nav-item">
-<span class="nav-icon">◇</span> Overview
-</a>
-
-<a href="projects.html" class="nav-item">
-<span class="nav-icon">◈</span> Projects
-</a>
-
-<a href="sprint.html" class="nav-item active">
-<span class="nav-icon">◻</span> Sprint Board
-</a>
-
-<a href="timeline.html" class="nav-item">
-<span class="nav-icon">◷</span> Timeline
-</a>
+<a href="RealDash.html" class="nav-item">Overview</a>
+<a href="projects.html" class="nav-item">Projects</a>
+<a href="sprint.html" class="nav-item active">Sprint Board</a>
+<a href="timeline.html" class="nav-item">Timeline</a>
 
 <div class="nav-label">Manage</div>
-
-<a href="team.html" class="nav-item">
-<span class="nav-icon">◌</span> Team
-</a>
-
-<a href="reports.html" class="nav-item">
-<span class="nav-icon">◌</span> Reports
-</a>
-
-<a href="goals.html" class="nav-item">
-<span class="nav-icon">◎</span> Goals
-</a>
+<a href="team.html" class="nav-item">Team</a>
+<a href="reports.html" class="nav-item">Reports</a>
+<a href="goals.html" class="nav-item">Goals</a>
 
 <div class="nav-label">Tools</div>
-
-<a href="docs.html" class="nav-item">
-<span class="nav-icon">◆</span> Docs
-</a>
-
-<a href="settings.html" class="nav-item">
-<span class="nav-icon">⚙</span> Settings
-</a>
-
+<a href="docs.html" class="nav-item">Docs</a>
+<a href="settings.html" class="nav-item">Settings</a>
 </aside>
 
-<!-- Main -->
 <div class="main">
 
 <header class="topbar">
 <div>
 <div class="page-title">Sprint Board</div>
-<div class="breadcrumb">Sprint 14</div>
+<div class="breadcrumb">Live Tasks</div>
 </div>
 </header>
 
@@ -77,44 +50,64 @@ RTPM
 
 <div class="sprint-board">
 
-<!-- TO DO -->
 <div class="sprint-col">
 <div class="sprint-col-title">TO DO</div>
-
-<div class="task-card">
-<div class="task-title">OAuth Google SSO</div>
+<div id="todo"></div>
 </div>
 
-<div class="task-card">
-<div class="task-title">Redis Cache Setup</div>
-</div>
-
-</div>
-
-<!-- IN PROGRESS -->
 <div class="sprint-col">
 <div class="sprint-col-title">IN PROGRESS</div>
-
-<div class="task-card">
-<div class="task-title">API Gateway rate limiting</div>
+<div id="inprogress"></div>
 </div>
 
-</div>
-
-<!-- DONE -->
 <div class="sprint-col">
 <div class="sprint-col-title">DONE</div>
-
-<div class="task-card">
-<div class="task-title">Dashboard UI Completed</div>
+<div id="done"></div>
 </div>
 
 </div>
 
 </div>
+</div>
+</div>
 
-</div>
-</div>
+<script src="api.js"></script>
+
+<script>
+async function loadTasks() {
+  try {
+    const res = await apiRequest("/api/tasks");
+    const tasks = res.data || res;
+
+    const todo = document.getElementById("todo");
+    const inprogress = document.getElementById("inprogress");
+    const done = document.getElementById("done");
+
+    todo.innerHTML = "";
+    inprogress.innerHTML = "";
+    done.innerHTML = "";
+
+    tasks.forEach(t => {
+      const card = document.createElement("div");
+      card.className = "task-card";
+      card.innerHTML = `<div class="task-title">${t.title}</div>`;
+
+      if (t.status === "todo" || t.status === "pending") {
+        todo.appendChild(card);
+      } else if (t.status === "in-progress") {
+        inprogress.appendChild(card);
+      } else if (t.status === "done" || t.status === "completed") {
+        done.appendChild(card);
+      }
+    });
+
+  } catch (err) {
+    console.error("Sprint load error:", err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadTasks);
+</script>
 
 </body>
 </html>
